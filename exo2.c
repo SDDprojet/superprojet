@@ -66,21 +66,6 @@ Cell* searchList(List* l, char* str){
     return NULL;
 }
 
-List* stol(char* s){
-    List* l = initList();
-    char* mot = "";
-    int i = 0;
-    while(s[i] != '\0'){
-        if(s[i+1] == '|'){
-            Cell* c1 = buildCell(mot);
-            insertFirst(l,c1);
-            mot = "";
-        }
-        mot = mot + s[i];
-        i++;
-    }
-    return l;
-}
 
 List* listdir(char* root_dir){
     DIR* dp = opendir(root_dir) ;
@@ -111,26 +96,19 @@ int main(){
 	Cell* c1 = buildCell("test");
 	Cell* c2 = buildCell("ahh");
 	Cell* c3 = buildCell("HZHE");
-    printf("ici\n");
 	
-    char* s = "hello|girl|bish";
-    List* l2 = stol(s);
-    printf("ok\n");
-
 	insertFirst(l,c1);
 	insertFirst(l,c2);
 	insertFirst(l,c3);
-    printf("ici la liste l1 et l2 \n");
+    
     printf("%s\n",ltos(l));
-    printf("%s\n",ltos(l2));
-    printf("ici\n");
 	//printf("%s\n",ctos(listGet(l,1)));
     List* m = listdir(".");
     printf("%s\n",ltos(m)); 
-	//printf("%p\n",searchList(l,"ahh"));
+	printf("%s\n",searchList(l,"ahh"));
 
 
-    // printf("--------------------------------------------\n");
-    // printf("%d \n",file_exists("Makefile"));
+    printf("--------------------------------------------\n");
+    printf("%d \n",file_exists("Makefile"));
 	return 0; 
 }
