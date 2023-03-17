@@ -80,7 +80,32 @@ List* listdir(char* root_dir){
     }
     return L;
 }
+List* stol4(char* s){
+    List * L = initList();
+    int debut = 0, i=0, cpt = 0;
+    char *tmp = malloc(256);
+    while(s[i]!= '\0'){
+        printf("la valeur de i = %d \n",i);
+        printf("la valeur de s = %d \n",strlen(s));
+        if(s[i]!='|'){
+            cpt++;
+        }else if (i<strlen(s)){
+            printf("on est dans la boule\n");
+            tmp = strncpy(tmp, s+debut,cpt);
+            Cell * C = buildCell(tmp);
+            insertFirst(L,C);
 
+            debut = i+1;
+            cpt = 0;
+        }
+        i++;
+    }
+    char* last_tmp = malloc(256);
+    last_tmp = strcpy(last_tmp, s+debut);
+    Cell * C = buildCell(last_tmp);
+    insertFirst(L,C);
+    return L;
+}
 int file_exists(char *file){
     List* l = listdir(".");
     Cell* c = searchList(l,file);
@@ -92,7 +117,9 @@ int file_exists(char *file){
 
 int main(){
 	List* l = initList();
-	
+	printf("%d\n","hahaha");
+    printf("%c\n",97);
+    printf("%d\n",strlen("1"));
 	Cell* c1 = buildCell("test");
 	Cell* c2 = buildCell("ahh");
 	Cell* c3 = buildCell("HZHE");
@@ -100,15 +127,16 @@ int main(){
 	insertFirst(l,c1);
 	insertFirst(l,c2);
 	insertFirst(l,c3);
-    
+    List* l3 = stol4("cest|bon|j|abondonne");
+    printf("%s\n",ltos(l3));
     printf("%s\n",ltos(l));
 	//printf("%s\n",ctos(listGet(l,1)));
-    List* m = listdir(".");
-    printf("%s\n",ltos(m)); 
-	printf("%s\n",searchList(l,"ahh"));
+    //List* m = listdir(".");
+    //printf("%s\n",ltos(m)); 
+	//printf("%s\n",searchList(l,"ahh"));
 
 
     printf("--------------------------------------------\n");
-    printf("%d \n",file_exists("Makefile"));
+    //printf("%d \n",file_exists("Makefile"));
 	return 0; 
 }

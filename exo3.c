@@ -94,9 +94,12 @@ List* stol(char* s){
     int debut = 0, i=0, cpt = 0;
     char *tmp = malloc(256);
     while(s[i]!= '\0'){
+        printf("la valeur de i = %d \n",i);
+        printf("la valeur de s = %d \n",strlen(s));
         if(s[i]!='|'){
             cpt++;
         }else if (i<strlen(s)){
+            printf("on est dans la boule");
             tmp = strncpy(tmp, s+debut, cpt);
             Cell * C = buildCell(tmp);
             insertFirst(L,C);
