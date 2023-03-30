@@ -112,6 +112,8 @@ List* stol(char* s){
     return L;
 }
 
+
+
 void affichageList(List *L){
     Cell * C = *L;
     while(C){
