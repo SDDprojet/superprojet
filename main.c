@@ -1,0 +1,69 @@
+#include "worktf.h"
+#include "commit.h"
+#include "filehash.h"
+#include "liste.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <dirent.h>
+
+
+int main(){
+	List* l = initList();
+
+	Cell* c1 = buildCell("test");
+	Cell* c2 = buildCell("ahh");
+	Cell* c3 = buildCell("HZHE");
+	
+	insertFirst(l,c1);
+	insertFirst(l,c2);
+	insertFirst(l,c3);
+    ltof(l,"test_ltof.txt");
+    List* l3 = stol("warintara|the|pretiest|my |love");
+    printf("%s\n",ltos(l3)); 
+    //printf("\n\n hastToPath avec fichier main.c = %s \n",hashToPath(sha256file("main.c")));
+    blobFile("test_ltof.txt");
+    
+    WorkFile* wifi = createWorkFile("waifu");
+    printf("%s \n ",wfts(wifi)); 
+    WorkFile* waaa = stwf(wfts(wifi));
+    printf("wa = %s \n ",wfts(waaa));
+    WorkTree* watermelon = initWorkTree();
+    appendWorkTree(watermelon,"water","12345463",1);
+    appendWorkTree(watermelon,"worm","5555555",1);
+
+    printf("la présence de fichier de worktree : %d \n",inWorkTree(watermelon,"water"));
+    
+    printf("watermelon =\n %s  \n",wtts(watermelon));
+    printf("wttf = %d \n",wttf(watermelon,"warintaralala"));
+    printf("ftwt =\n %s \n",wtts(ftwt("warintaralala")));
+    printf("--------------------Exercice 5--------------------\n");
+    printf("blobWorkTree(watermelon) = %s \n ",blobWorkTree2(watermelon));
+    
+
+    //List* l2 = ftol("test_ltof.txt");
+    //printf("%s\n",ltos(l));
+    //printf("ici c'est l2 %s\n",ltos(l));
+
+	//printf("%s\n",ctos(listGet(l,1)));
+    //List* m = listdir(".");
+    //printf("%s\n",ltos(m)); 
+	//printf("%s\n",searchList(l,"ahh"));
+
+
+    printf("--------------------------------------------\n");
+    List* m = listdir(".");
+    printf("%s\n",ltos(m)); 
+    printf("%d \n",file_exists("exo2.c"));
+
+    printf("\n");
+    printf("\n");
+    printf("-------------------Exercice 6-----------------\n");
+    printf("stkv de la chaîne 'Massyl:Bengana' = %s \n",kvts(stkv("Massyl:Bengana")));
+	return 0; 
+}
