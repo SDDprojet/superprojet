@@ -1,10 +1,10 @@
 #ifdef liste_H
 #define liste_H
 
-typedef struct cell {
-	char* data ;
-	struct cell* next ;
-} Cell ;
+typedef struct cell{
+char* data ;
+struct cell* next ;
+}Cell ;
 
 typedef Cell* List ;
 
