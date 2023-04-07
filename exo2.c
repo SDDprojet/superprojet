@@ -358,16 +358,7 @@ char* hashToFile (char* hash ) {
  return hashToPath ( hash ) ;
  }
 
-char* blobWorkTree(WorkTree* wt){
-char fname [100] = "/tmp/myfileXXXXXX" ;
-int fd = mkstemp(fname) ;
-wttf( wt , fname ) ;
-char* hash = sha256file ( fname ) ;
-char* ch = hashToFile ( hash ) ;
-strcat( ch , ".t") ;
-cp( ch , fname ) ;
-return hash ;
-}
+
 char* blobWorkTree2(WorkTree* wt){
     static char template[] = "/tmp/myfileXXXXXX";
     char fname[100];
