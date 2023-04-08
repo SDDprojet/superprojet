@@ -371,7 +371,63 @@ void blobFile(char* file){
     char* ch=hashToPath(hash);
     cp(ch,file);
  }
- char* saveWorkTree(WorkTree* wt, char* path) {
+ char* saveWorkTree(WorkTree* wt, char* path){
+    int i;
+    for(i = 0; i < wt->numFiles; i++) {
+        WorkFile* WF = &(wt->files[i]);
+        char* hash = NULL;
+        // If WF corresponds to a file
+        if(WF->mode == 0) {
+            // Create an instant snapshot of the file
+            hash = sha256file(WF->name);
+            // Save the hash and mode in WF
+            WF->hash = hash;
+            WF->mode = strtol(hash, NULL, 16) & 0777;
+        }
+        // If WF corresponds to a directory
+        else if(WF->mode == 1) {
+            // Create a new WorkTree representing the contents of the directory
+            WorkTree newWT;
+            newWT.files = NULL;
+            newWT.numFiles = 0;
+            listdir(WF->name, &newWT);
+            // Recursively call saveWorkTree on the new WorkTree
+            saveWorkTree(&newWT, WF->name);
+            // Save the hash and mode in WF
+            WF->hash = newWT.files[0].hash;
+            WF->mode = newWT.files[0].mode;
+            // Free the memory allocated for the new WorkTree
+            free(newWT.files);
+        }
+    }
+
+    // Call blobWorkTree on wt to create its instant snapshot and return its hash
+    char* wtHash = blobWorkTree(wt);
+    return wtHash;
+}
+void restoreWorkTree(WorkTree* wt, char* path) {
+    List* L = ftol(path); // Charger la liste depuis le fichier
+
+    Cell* c = *L;
+    while (c != NULL) {
+        char* hash = ctos(c); // Récupérer le hash depuis la cellule
+        char* file_path = hashToPath(hash); // Convertir le hash en chemin de fichier
+        char* source_path = malloc(strlen(wt->dir)+strlen(file_path)+2); // Allouer de la mémoire pour le chemin complet
+        sprintf(source_path, "%s/%s", wt->dir, file_path); // Construire le chemin complet
+        char* dest_path = malloc(strlen(wt->dir)+strlen(ctos(c))+2); // Allouer de la mémoire pour le chemin complet de destination
+        sprintf(dest_path, "%s/%s", wt->dir, ctos(c)); // Construire le chemin complet de destination
+
+        cp(dest_path, source_path); // Copier le fichier depuis le chemin source vers le chemin de destination
+        free(source_path); // Libérer la mémoire allouée pour le chemin source
+        free(dest_path); // Libérer la mémoire allouée pour le chemin de destination
+
+        c = c->next; // Passer à la cellule suivante
+    }
+
+    freeCell(*L); // Libérer la mémoire allouée pour la liste
+    free(L); // Libérer la mémoire allouée pour le pointeur de liste
+}
+ /*char* saveWorkTree(WorkTree* wt, char* path) {
     // Parcours du tableau de WorkFile de wt
     for (int i = 0; i < wt->numFiles; i++) {
         WorkFile* wf = &(wt->files[i]);
@@ -448,7 +504,7 @@ void restoreWorkTree(WorkTree* wt, char* path) {
             free(newWT);
         }
     }
-}
+}*/
 /*
 int isFile(const char* name)
 {
