@@ -61,20 +61,19 @@ kvp* stkv(char* s){
 
 Commit* initCommit(){
     Commit* c = malloc(sizeof(Commit));
-    c-> n = 0;
     c->size = SIZE;
-    c->T = malloc(sizeof(kvp));
-    for(int i = c->n; i< c->size ; i++ ){
-        c->T[i]->key = NULL;
-        c->T[i]->value = NULL;
+    c->T = malloc(SIZE*sizeof(kvp*));
+    for(int i = 0; i< c->size ; i++ ){
+        c->T[i] = NULL;
     }
+    c->n = 0;
     return c;
 }
 
 unsigned long hash(unsigned char *str){
 
 
-	unsigned int hash = 0;
+	unsigned long hash = 0;
 	int c;
 
 	while (c = *str++)
@@ -86,7 +85,7 @@ unsigned long hash(unsigned char *str){
 
 
 void commitSet(Commit* c,char* key, char* value){    
-    int p = hash(key)%c->size ;
+    unsigned long p = hash(key)%c->size ;
     while(c->T[p] != NULL ) {
         p =(p +1)%c-> size ; //probing lineaire
     }
@@ -101,10 +100,12 @@ Commit* createCommit(char* hash){
 
 char* commitGet(Commit* c,char* key){
     int i = 0;
-    while(i != c->n){
-        if(strcmp(c->T[i]->key,key)==0){
-            return c->T[i]->value;
+    int p = hash(key)%c->size;
+    while(c->T[p] != NULL && i < c->size){
+        if(strcmp(c->T[p]->key,key)==0){
+            return c->T[p]->value;
         }
+        p = (p+1)%c->size;
         i++;
     }
     return NULL;
@@ -112,9 +113,14 @@ char* commitGet(Commit* c,char* key){
 
 char* cts(Commit* c){
     int i =0;
-    char* chaine;
-    while(i != c->n){
-        sprintf(chaine,"%s \n",kvts(c->T[i]));
+    char* chaine = malloc(sizeof(char)*100*c->n ) ;
+    while(i < c->size){
+        if(c->T[i] != NULL){
+            printf("i = %d et c->n = %d \n",i,c->n);
+            strcat(chaine,kvts(c->T[i]));
+            strcat(chaine,"\n");
+        }
+        i++;
     }
     return chaine ;
 }
@@ -155,6 +161,13 @@ Commit* ftc(char* file){
     return ptr;
 } 
 
-char* blobCommit(Commit* c){
-    return "";
+char * blobCommit ( Commit * c ) {
+    char fname[100] = " /tmp/myfileXXXXXX" ;
+    int fd =mkstemp(fname);
+    ctf(c,fname);
+    char *hash = sha256file(fname) ;
+    char *ch = hashToFile(hash) ;
+    strcat(ch,".c");
+    cp(ch,fname);
+    return hash ;
 }

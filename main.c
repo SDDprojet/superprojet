@@ -68,5 +68,13 @@ int main(){
     kvp* k = stkv("Massyl:Bengana");
     char* k2 = kvts(k);
     printf("stkv de la chaîne 'Massyl:Bengana' = %s \n",k2);
+    Commit* c=createCommit("123456");
+    commitSet(c,"warintara","dreamu");
+    commitSet(c,"mmomoo","mmmmm");
+    
+    
+    printf("commit get de la clé warintara return the value = %s \n",commitGet(c,"warintara"));
+    printf("cts de commit c = %s \n",cts(c));
+
 	return 0; 
 }
