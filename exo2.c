@@ -371,6 +371,84 @@ void blobFile(char* file){
     char* ch=hashToPath(hash);
     cp(ch,file);
  }
+ char* saveWorkTree(WorkTree* wt, char* path) {
+    // Parcours du tableau de WorkFile de wt
+    for (int i = 0; i < wt->numFiles; i++) {
+        WorkFile* wf = &(wt->files[i]);
+        // Si wf correspond à un fichier
+        if (!strstr(wf->name, ".t")) {
+            // Création de l'enregistrement instantané du fichier
+            blobFile(wf->name, wf->hash, &(wf->mode));
+            // Sauvegarde du hash et du mode dans wf
+            wf->hash = strdup(wf->hash);
+            wf->mode = getChmod(wf->name);
+        }
+        // Si wf correspond à un répertoire
+        else {
+            // Création d'un nouveau WorkTree pour représenter le contenu du répertoire
+            WorkTree newWT;
+            newWT.name = strdup(wf->name);
+            newWT.numFiles = 0;
+            newWT.files = NULL;
+            // Appel récursif sur le nouveau WorkTree
+            char* newHash = saveWorkTree(&newWT, path);
+            // Sauvegarde du hash et du mode dans wf
+            wf->hash = strdup(newHash);
+            wf->mode = getChmod(wf->name);
+        }
+    }
+    // Création de l'enregistrement instantané du WorkTree wt
+    char* wtHash = (char*)malloc(10 * sizeof(char)); // Exemple de hash pour le WorkTree wt
+    blobWorkTree(wt, wtHash);
+    return wtHash;
+}
+
+void restoreWorkTree(WorkTree* wt, char* path) {
+    int i;
+    for (i = 0; i < wt->count; i++) {
+        WorkFile* wf = &(wt->files[i]);
+
+        // Trouver l'enregistrement instantané correspondant au hash de WF
+        char* hash = wf->hash;
+        Blob* blob = findBlobByHash(hash);
+
+        if (blob == NULL) {
+            printf("Erreur : impossible de trouver l'enregistrement instantané pour le fichier %s\n", wf->name);
+            continue;
+        }
+
+        // Si l'enregistrement ne possède pas l'extension ".t", il s'agit d'un fichier
+        if (strstr(blob->name, ".t") == NULL) {
+            // Créer une copie de l'enregistrement à l'endroit indiqué par la variable path
+            char* newFilePath = createFilePath(path, wf->name);
+            FILE* file = fopen(newFilePath, "wb");
+            if (file == NULL) {
+                printf("Erreur : impossible de créer le fichier %s\n", newFilePath);
+                continue;
+            }
+
+            fwrite(blob->content, 1, blob->size, file);
+            fclose(file);
+
+            // Modifier les autorisations du fichier selon le mode de l'enregistrement
+            chmod(newFilePath, wf->mode);
+            printf("Restauré : %s\n", newFilePath);
+        }
+        // Si l'enregistrement possède l'extension ".t", il s'agit d'un répertoire
+        else {
+            // Créer le WorkTree associé
+            WorkTree* newWT = parseWorkTree(blob->content, blob->size);
+
+            // Modifier la variable path en y ajoutant ce répertoire à la fin
+            char* newPath = createFilePath(path, wf->name);
+
+            // Faire un appel récursif sur le nouveau WorkTree
+            restoreWorkTree(newWT, newPath);
+
+            free(newWT);
+        }
+    }
+}
 /*
 int isFile(const char* name)
 {
