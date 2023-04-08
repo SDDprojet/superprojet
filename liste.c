@@ -1,7 +1,9 @@
 #include "liste.h"
+#include "filehash.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
 
 List* initList(){
     List* l=(List*)(malloc(sizeof(List)));
@@ -175,3 +177,15 @@ void blobFile(char* file){
     system(command1);
     cp(chemin,file);
 }
+void blobFile2(char* file){
+    char* hash = sha256file(file) ;
+    char* ch2 = strdup(hash) ;
+    ch2[2] = '\0' ;
+    if (!file_exists(ch2)){
+       char buff[100];
+       sprintf(buff,"mkdir %s",ch2);
+       system(buff);
+    }
+    char* ch=hashToPath(hash);
+    cp(ch,file);
+ }

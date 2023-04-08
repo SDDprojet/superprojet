@@ -359,23 +359,18 @@ char* hashToFile (char* hash ) {
  }
 
 
-char* blobWorkTree2(WorkTree* wt){
-    static char template[] = "/tmp/myfileXXXXXX";
-    char fname[100];
-    strcpy(fname,template);
-    mkstemp(fname);
-    wttf(wt,fname);
-    char* hash = sha256file(fname);
-    char* chemin = hashToPath(hash);
-    strcat(chemin,".t");
-    char command1[500];
-    sprintf(command1, "mkdir %c%c",chemin[0],chemin[1]);
-    system(command1);
-    char command2[500];
-    sprintf(command2, "cat %s > %s",fname,chemin);
-    system(command2);
-    return hash;
-}
+void blobFile(char* file){
+    char* hash = sha256file(file) ;
+    char* ch2 = strdup(hash) ;
+    ch2[2] = '\0' ;
+    if (!file_exists(ch2)){
+       char buff[100];
+       sprintf(buff,"mkdir %s",ch2);
+       system(buff);
+    }
+    char* ch=hashToPath(hash);
+    cp(ch,file);
+ }
 /*
 int isFile(const char* name)
 {
@@ -500,104 +495,104 @@ caractères de la forme "clé :valeur" */
 	return chaine;
 }
 
-kvp* stkv(char* s){
-    int r=0;
-    char mot1[100];
-    char mot2[100];
-    int i=0;
-    while (s[r]!=':'){
-           mot1[r] = s[r];
-           r++ ;
-    }
+//kvp* stkv(char* s){
+//    int r=0;
+//    char mot1[100];
+//    char mot2[100];
+//    int i=0;
+//    while (s[r]!=':'){
+//           mot1[r] = s[r];
+//           r++ ;
+//    }
+//
+//    mot1[r]='\0';
+//        r++;
+//    while (s[r]!='\0'){
+//        mot2[i]=s[r];
+//        i++;
+//        r++;
+//    }
+//    
+//    mot2[i]='\0';
+//    kvp* k=createKeyVal(mot1,mot2);
+//    return k;
+//}
+//
+//Commit* initCommit(){
+//    Commit* c = malloc(sizeof(Commit));
+//    kvp* tab = malloc(sizeof(kvp));
+//    c-> n = 0;
+//    c->size = SIZE;
+//    c->T = tab;
+//    for(int i = c->n; i< c->size ; i++ ){
+//        c->T[i]->key = NULL;
+//        c->T[i]->Value = NULL;
+//    }
+//    return c;
+//}
+//
+//unsigned long hash(unsigned char *str){
+//
+//
+//	unsigned int hash = 0;
+//	int c;
+//
+//	while (c = *str++)
+//	    hash += c;
+//
+//	return hash;
+//    }
+//
 
-    mot1[r]='\0';
-        r++;
-    while (s[r]!='\0'){
-        mot2[i]=s[r];
-        i++;
-        r++;
-    }
-    
-    mot2[i]='\0';
-    kvp* k=createKeyVal(mot1,mot2);
-    return k;
-}
 
-Commit* initCommit(){
-    Commit* c = malloc(sizeof(Commit));
-    kvp* tab = malloc(sizeof(kvp));
-    c-> n = 0;
-    c->size = SIZE;
-    c->T = tab;
-    for(int i = c->n; i< c->size ; i++ ){
-        c->T[i]->key = NULL;
-        c->T[i]->Value = NULL;
-    }
-    return c;
-}
+//void commitSet(Commit* c,char* key, char* value){    
+//    int p = hash(key)%c->size ;
+//    while(c->T[p] != NULL ) {
+//        p =(p +1)%c-> size ; //probing lineaire
+//    }
+//    c->T[p] =createKeyVal(key,value);
+//    c->n++;
+//}
+//Commit* createCommit(char* hash){
+//    Commit* c =initCommit();
+//    commitSet(c,"tree",hash);
+//    return c;
+//}
+//
+//char* commitGet(Commit* c,char* key){
+//    int i = 0;
+//    while(i != c->n){
+//        if(strcmp(c->T[i]->key,key)==0){
+//            return c->T[i]->value;
+//        }
+//        i++;
+//    }
+//    return NULL;
+//}
+//
+//char* cts(Commit* c){
+//    int i =0;
+//    char* chaine;
+//    while(i != c->n){
+//        sprintf(chaine,"%s \n",kvts(c->T[i]));
+//    }
+//    return chaine ;
+//}
+//
+//void ctf(Commit* c, char* file){
+//    FILE* dest = fopen(file);
+//    if(dest == NULL){
+//        printf("Problème d'ouverture fichier \n");
+//        return ;
+//    }
+//
+//    
+//}
 
-unsigned long hash(unsigned char *str){
-
-
-	unsigned int hash = 0;
-	int c;
-
-	while (c = *str++)
-	    hash += c;
-
-	return hash;
-    }
-
-
-
-void commitSet(Commit* c,char* key, char* value){    
-    int p = hash(key)%c->size ;
-    while(c->T[p] != NULL ) {
-        p =(p +1)%c-> size ; //probing lineaire
-    }
-    c->T[p] =createKeyVal(key,value);
-    c->n++;
-}
-Commit* createCommit(char* hash){
-    Commit* c =initCommit();
-    commitSet(c,"tree",hash);
-    return c;
-}
-
-char* commitGet(Commit* c,char* key){
-    int i = 0;
-    while(i != c->n){
-        if(strcmp(c->T[i]->key,key)==0){
-            return c->T[i]->value;
-        }
-        i++;
-    }
-    return NULL;
-}
-
-char* cts(Commit* c){
-    int i =0;
-    char* chaine;
-    while(i != c->n){
-        sprintf(chaine,"%s \n",kvts(c->T[i]));
-    }
-    return chaine ;
-}
-
-void ctf(Commit* c, char* file){
-    FILE* dest = fopen(file);
-    if(dest == NULL){
-        printf("Problème d'ouverture fichier \n");
-        return ;
-    }
-
-    
-}
-
-Commit* ftc(char* file){
-    Commit c = initCommit();
-    return c
-}
+//Commit* ftc(char* file){
+//    Commit c = initCommit();
+//    return c;
+//}
 int main(){
 	List* l = initList();
 
@@ -649,6 +644,6 @@ int main(){
     printf("\n");
     printf("\n");
     printf("-------------------Exercice 6-----------------\n");
-    printf("stkv de la chaîne 'Massyl:Bengana' = %s \n",kvts(stkv("Massyl:Bengana")));
+    //printf("stkv de la chaîne 'Massyl:Bengana' = %s \n",kvts(stkv("Massyl:Bengana")));
 	return 0; 
 }

@@ -23,12 +23,13 @@ int main(){
 	insertFirst(l,c1);
 	insertFirst(l,c2);
 	insertFirst(l,c3);
-    ltof(l,"test_ltof.txt");
+    ltof(l,"test_ltof2222.txt");
     List* l3 = stol("warintara|the|pretiest|my |love");
     printf("%s\n",ltos(l3)); 
-    //printf("\n\n hastToPath avec fichier main.c = %s \n",hashToPath(sha256file("main.c")));
-    blobFile("test_ltof.txt");
+    printf("\n\n hastToPath avec fichier main.c = %s \n",hashToPath(sha256file("main.c")));
+    blobFile2("test_ltof.txt");
     
+    printf("---------------Workfile-----------\n");
     WorkFile* wifi = createWorkFile("waifu");
     printf("%s \n ",wfts(wifi)); 
     WorkFile* waaa = stwf(wfts(wifi));
@@ -64,6 +65,8 @@ int main(){
     printf("\n");
     printf("\n");
     printf("-------------------Exercice 6-----------------\n");
-    printf("stkv de la chaîne 'Massyl:Bengana' = %s \n",kvts(stkv("Massyl:Bengana")));
+    kvp* k = stkv("Massyl:Bengana");
+    char* k2 = kvts(k);
+    printf("stkv de la chaîne 'Massyl:Bengana' = %s \n",k2);
 	return 0; 
 }

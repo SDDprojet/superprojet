@@ -1,4 +1,4 @@
-#ifdef worktf_H
+#ifndef worktf_H
 #define worktf_H
 
 typedef struct {

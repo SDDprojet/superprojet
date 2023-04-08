@@ -1,5 +1,6 @@
-#ifdef liste_H
-#define liste_H
+#ifndef LISTE_H
+
+#define LISTE_H
 
 typedef struct cell{
 char* data ;
@@ -49,7 +50,7 @@ List* stol(char* s);
 void ltof(List* L, char* path);
 // transforme une chaine de caracteres representant une liste en une liste chainee
 
-void ftol(char* path);
+List* ftol(char* path);
 // transforme une chaine de caracteres representant une liste en une liste chainee
 
 void cp(char *to, char *from);
@@ -58,5 +59,6 @@ char* hashToPath(char* hash);
 
 void blobFile(char* file);
 
+void blobFile2(char* file);
 
 #endif

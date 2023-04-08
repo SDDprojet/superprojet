@@ -11,7 +11,7 @@
 #include <fcntl.h>
 #include <dirent.h>
 
-
+#define SIZE 20
 
 int getChmod(const char * path) {
     struct stat ret;
@@ -78,9 +78,7 @@ int appendWorkTree(WorkTree* wt, char* name, char* hash, int mode) {
         if(wt->size == wt->n){
             printf("Le WorkTree est complet\n");
             return 1;
-        }
-        
-        else{// Crée une nouvelle entrée dans le WorkTree
+        }else{// Crée une nouvelle entrée dans le WorkTree
         WorkFile* wf = createWorkFile(name);
         wf->hash = strdup(hash);
         wf->mode = mode;
@@ -88,10 +86,7 @@ int appendWorkTree(WorkTree* wt, char* name, char* hash, int mode) {
         wt->n++;
         return 0;
         }
-    } 
-    
-
-    
+    }return 1;
 }
 char* wtts(WorkTree* wt){
     char * chaine = malloc(256*sizeof(char));

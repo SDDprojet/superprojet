@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
-
+#define SIZE 20
 
 
 kvp* createKeyVal(char* key,char* val){
@@ -63,13 +63,12 @@ kvp* stkv(char* s){
 
 Commit* initCommit(){
     Commit* c = malloc(sizeof(Commit));
-    kvp* tab = malloc(sizeof(kvp));
     c-> n = 0;
     c->size = SIZE;
-    c->T = tab;
+    c->T = malloc(sizeof(kvp));
     for(int i = c->n; i< c->size ; i++ ){
         c->T[i]->key = NULL;
-        c->T[i]->Value = NULL;
+        c->T[i]->value = NULL;
     }
     return c;
 }
@@ -123,7 +122,7 @@ char* cts(Commit* c){
 }
 
 void ctf(Commit* c, char* file){
-    FILE* dest = fopen(file);
+    FILE* dest = fopen(file,'w');
     if(dest == NULL){
         printf("Problème d'ouverture fichier \n");
         return ;
@@ -132,7 +131,8 @@ void ctf(Commit* c, char* file){
     
 }
 
+
 Commit* ftc(char* file){
     Commit c = initCommit();
     return c
-}
+} 

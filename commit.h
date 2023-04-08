@@ -1,4 +1,4 @@
-#ifdef commit_H
+#ifndef commit_H
 #define commit_H
 
 typedef struct key_value_pair {
