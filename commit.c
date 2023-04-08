@@ -28,8 +28,6 @@ void freeKeyVal(kvp* kv){
 }
 
 char* kvts(kvp* k){
-/* permet de convertir un élément en une chaine de 
-caractères de la forme "clé :valeur" */
 	if(k == NULL){
 		return NULL;
 	}
@@ -127,12 +125,20 @@ void ctf(Commit* c, char* file){
         printf("Problème d'ouverture fichier \n");
         return ;
     }
-
-    
+    int i = 0;
+    while(i<c->n){
+        kvp* chaine = c->T[i];
+        fprintf(dest,"%s\n", kvts(chaine));
+        free(chaine);
+        i++;
+    }
+    fclose(dest);
 }
 
+    
 
-Commit* ftc(char* file){
-    Commit c = initCommit();
-    return c
-} 
+
+//Commit* ftc(char* file){
+//    Commit c = initCommit();
+//    return c;
+//} 

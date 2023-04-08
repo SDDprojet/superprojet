@@ -373,8 +373,8 @@ void blobFile(char* file){
  }
  char* saveWorkTree(WorkTree* wt, char* path){
     int i;
-    for(i = 0; i < wt->numFiles; i++) {
-        WorkFile* WF = &(wt->files[i]);
+    for(i = 0; i < wt->n; i++) {
+        WorkFile* WF = &(wt->tab[i]);
         char* hash = NULL;
         // If WF corresponds to a file
         if(WF->mode == 0) {
@@ -388,16 +388,16 @@ void blobFile(char* file){
         else if(WF->mode == 1) {
             // Create a new WorkTree representing the contents of the directory
             WorkTree newWT;
-            newWT.files = NULL;
-            newWT.numFiles = 0;
+            newWT.tab = NULL;
+            newWT.n = 0;
             listdir(WF->name, &newWT);
             // Recursively call saveWorkTree on the new WorkTree
             saveWorkTree(&newWT, WF->name);
             // Save the hash and mode in WF
-            WF->hash = newWT.files[0].hash;
-            WF->mode = newWT.files[0].mode;
+            WF->hash = newWT.tab[0].hash;
+            WF->mode = newWT.tab[0].mode;
             // Free the memory allocated for the new WorkTree
-            free(newWT.files);
+            free(newWT.tab);
         }
     }
 
@@ -429,8 +429,8 @@ void restoreWorkTree(WorkTree* wt, char* path) {
 }
  /*char* saveWorkTree(WorkTree* wt, char* path) {
     // Parcours du tableau de WorkFile de wt
-    for (int i = 0; i < wt->numFiles; i++) {
-        WorkFile* wf = &(wt->files[i]);
+    for (int i = 0; i < wt->n; i++) {
+        WorkFile* wf = &(wt->tab[i]);
         // Si wf correspond à un fichier
         if (!strstr(wf->name, ".t")) {
             // Création de l'enregistrement instantané du fichier
@@ -444,8 +444,8 @@ void restoreWorkTree(WorkTree* wt, char* path) {
             // Création d'un nouveau WorkTree pour représenter le contenu du répertoire
             WorkTree newWT;
             newWT.name = strdup(wf->name);
-            newWT.numFiles = 0;
-            newWT.files = NULL;
+            newWT.n = 0;
+            newWT.tab = NULL;
             // Appel récursif sur le nouveau WorkTree
             char* newHash = saveWorkTree(&newWT, path);
             // Sauvegarde du hash et du mode dans wf
@@ -462,7 +462,7 @@ void restoreWorkTree(WorkTree* wt, char* path) {
 void restoreWorkTree(WorkTree* wt, char* path) {
     int i;
     for (i = 0; i < wt->count; i++) {
-        WorkFile* wf = &(wt->files[i]);
+        WorkFile* wf = &(wt->tab[i]);
 
         // Trouver l'enregistrement instantané correspondant au hash de WF
         char* hash = wf->hash;
@@ -629,104 +629,102 @@ caractères de la forme "clé :valeur" */
 	return chaine;
 }
 
-//kvp* stkv(char* s){
-//    int r=0;
-//    char mot1[100];
-//    char mot2[100];
-//    int i=0;
-//    while (s[r]!=':'){
-//           mot1[r] = s[r];
-//           r++ ;
-//    }
-//
-//    mot1[r]='\0';
-//        r++;
-//    while (s[r]!='\0'){
-//        mot2[i]=s[r];
-//        i++;
-//        r++;
-//    }
-//    
-//    mot2[i]='\0';
-//    kvp* k=createKeyVal(mot1,mot2);
-//    return k;
-//}
-//
-//Commit* initCommit(){
-//    Commit* c = malloc(sizeof(Commit));
-//    kvp* tab = malloc(sizeof(kvp));
-//    c-> n = 0;
-//    c->size = SIZE;
-//    c->T = tab;
-//    for(int i = c->n; i< c->size ; i++ ){
-//        c->T[i]->key = NULL;
-//        c->T[i]->Value = NULL;
-//    }
-//    return c;
-//}
-//
-//unsigned long hash(unsigned char *str){
-//
-//
-//	unsigned int hash = 0;
-//	int c;
-//
-//	while (c = *str++)
-//	    hash += c;
-//
-//	return hash;
-//    }
-//
+kvp* stkv(char* s){
+    int r=0;
+    char mot1[100];
+    char mot2[100];
+    int i=0;
+    while (s[r]!=':'){
+           mot1[r] = s[r];
+           r++ ;
+    }
+
+    mot1[r]='\0';
+        r++;
+    while (s[r]!='\0'){
+        mot2[i]=s[r];
+        i++;
+        r++;
+    }
+    
+    mot2[i]='\0';
+    kvp* k=createKeyVal(mot1,mot2);
+    return k;
+}
+
+Commit* initCommit(){
+    Commit* c = malloc(sizeof(Commit));
+    kvp* tab = malloc(sizeof(kvp));
+    c-> n = 0;
+    c->size = SIZE;
+    c->T = tab;
+    for(int i = c->n; i< c->size ; i++ ){
+        c->T[i]->key = NULL;
+        c->T[i]->Value = NULL;
+    }
+    return c;
+}
+
+unsigned long hash(unsigned char *str){
 
 
-//void commitSet(Commit* c,char* key, char* value){    
-//    int p = hash(key)%c->size ;
-//    while(c->T[p] != NULL ) {
-//        p =(p +1)%c-> size ; //probing lineaire
-//    }
-//    c->T[p] =createKeyVal(key,value);
-//    c->n++;
-//}
-//Commit* createCommit(char* hash){
-//    Commit* c =initCommit();
-//    commitSet(c,"tree",hash);
-//    return c;
-//}
-//
-//char* commitGet(Commit* c,char* key){
-//    int i = 0;
-//    while(i != c->n){
-//        if(strcmp(c->T[i]->key,key)==0){
-//            return c->T[i]->value;
-//        }
-//        i++;
-//    }
-//    return NULL;
-//}
-//
-//char* cts(Commit* c){
-//    int i =0;
-//    char* chaine;
-//    while(i != c->n){
-//        sprintf(chaine,"%s \n",kvts(c->T[i]));
-//    }
-//    return chaine ;
-//}
-//
-//void ctf(Commit* c, char* file){
-//    FILE* dest = fopen(file);
-//    if(dest == NULL){
-//        printf("Problème d'ouverture fichier \n");
-//        return ;
-//    }
-//
-//    
-//}
+	unsigned int hash = 0;
+	int c;
 
-//Commit* ftc(char* file){
-//    Commit c = initCommit();
-//    return c;
-//}
+	while (c = *str++)
+	    hash += c;
+
+	return hash;
+    }
+
+
+void commitSet(Commit* c,char* key, char* value){    
+    int p = hash(key)%c->size ;
+    while(c->T[p] != NULL ) {
+        p =(p +1)%c-> size ; //probing lineaire
+    }
+    c->T[p] =createKeyVal(key,value);
+    c->n++;
+}
+Commit* createCommit(char* hash){
+    Commit* c =initCommit();
+    commitSet(c,"tree",hash);
+    return c;
+}
+
+char* commitGet(Commit* c,char* key){
+    int i = 0;
+    while(i != c->n){
+        if(strcmp(c->T[i]->key,key)==0){
+            return c->T[i]->value;
+        }
+        i++;
+    }
+    return NULL;
+}
+
+char* cts(Commit* c){
+    int i =0;
+    char* chaine;
+    while(i != c->n){
+        sprintf(chaine,"%s \n",kvts(c->T[i]));
+    }
+    return chaine ;
+}
+
+void ctf(Commit* c, char* file){
+    FILE* dest = fopen(file);
+    if(dest == NULL){
+        printf("Problème d'ouverture fichier \n");
+        return ;
+    }
+
+    
+
+Commit* ftc(char* file){
+    Commit c = initCommit();
+    return c;
+}
 int main(){
 	List* l = initList();
 
