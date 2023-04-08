@@ -14,7 +14,7 @@
 #define SIZE 20
 
 
-kvp* createKeyVal(char* key,char* val){
+kvp* createKeyVal(char* key,char* val){ //deja testé
     kvp* k = malloc(sizeof(kvp));
     k->key = strdup(key);
     k->value = strdup(val);
@@ -27,7 +27,7 @@ void freeKeyVal(kvp* kv){
     free(kv);
 }
 
-char* kvts(kvp* k){
+char* kvts(kvp* k){ //deja testé
 	if(k == NULL){
 		return NULL;
 	}
@@ -36,7 +36,7 @@ char* kvts(kvp* k){
 	return chaine;
 }
 
-kvp* stkv(char* s){
+kvp* stkv(char* s){ //deja testé
     int r=0;
     char mot1[100];
     char mot2[100];
@@ -59,7 +59,7 @@ kvp* stkv(char* s){
     return k;
 }
 
-Commit* initCommit(){
+Commit* initCommit(){ //deja testé
     Commit* c = malloc(sizeof(Commit));
     c->size = SIZE;
     c->T = malloc(SIZE*sizeof(kvp*));
@@ -70,7 +70,7 @@ Commit* initCommit(){
     return c;
 }
 
-unsigned long hash(unsigned char *str){
+unsigned long hash(unsigned char *str){ //deja testé
 
 
 	unsigned long hash = 0;
@@ -84,7 +84,7 @@ unsigned long hash(unsigned char *str){
 
 
 
-void commitSet(Commit* c,char* key, char* value){    
+void commitSet(Commit* c,char* key, char* value){     //deja testé
     unsigned long p = hash(key)%c->size ;
     while(c->T[p] != NULL ) {
         p =(p +1)%c-> size ; //probing lineaire
@@ -92,13 +92,13 @@ void commitSet(Commit* c,char* key, char* value){
     c->T[p] =createKeyVal(key,value);
     c->n++;
 }
-Commit* createCommit(char* hash){
+Commit* createCommit(char* hash){ //deja testé
     Commit* c =initCommit();
     commitSet(c,"tree",hash);
     return c;
 }
 
-char* commitGet(Commit* c,char* key){
+char* commitGet(Commit* c,char* key){ //deja testé
     int i = 0;
     int p = hash(key)%c->size;
     while(c->T[p] != NULL && i < c->size){
@@ -111,7 +111,7 @@ char* commitGet(Commit* c,char* key){
     return NULL;
 }
 
-char* cts(Commit* c){
+char* cts(Commit* c){ //deja testé
     int i =0;
     char* chaine = malloc(sizeof(char)*100*c->n ) ;
     while(i < c->size){
@@ -125,23 +125,54 @@ char* cts(Commit* c){
     return chaine ;
 }
 
-void ctf(Commit* c, char* file){
-    FILE* dest = fopen(file,'w');
+Commit* stc(char* ch){ // à tester
+    Commit* c = initCommit();
+    char buffer[256]; // lecture de chaque ligne
+    int i = 0;
+    int r = 0;
+    if(ch == NULL){
+        return c;
+    }
+    while(ch[r] != '\0'){
+        if(ch[r] == '\n'){
+            buffer[i]= '\0';
+            kvp* ptr; 
+            ptr = stkv(buffer); //enregistre kv dans la vairiable 
+            commitSet(c,ptr->key,ptr->value); //sauvegarde ce kv dans commit 
+            freeKeyVal(ptr);
+            
+        }
+        else{
+            buffer[i]= ch[r];
+            i++;
+        }
+        r++;
+
+    }
+    
+    return c;
+}
+
+void ctf(Commit* c, char* file){ //dejà testé 
+    FILE* dest = fopen(file,"w");
     if(dest == NULL){
         printf("Problème d'ouverture fichier \n");
         return ;
     }
     int i = 0;
-    while(i<c->n){
-        kvp* chaine = c->T[i];
-        fprintf(dest,"%s\n", kvts(chaine));
-        free(chaine);
+    while(i<c->size){
+        if(c->T[i] != NULL){
+            kvp* chaine = c->T[i];
+            fprintf(dest,"%s\n", kvts(chaine));
+            free(chaine);
+            
+        }
         i++;
     }
     fclose(dest);
 }
 
-Commit* ftc(char* file){
+Commit* ftc(char* file){ //à refaire
     Commit* c = initCommit();
     FILE* f = fopen(file,'r');
 
