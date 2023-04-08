@@ -135,10 +135,26 @@ void ctf(Commit* c, char* file){
     fclose(dest);
 }
 
-    
+Commit* ftc(char* file){
+    Commit* c = initCommit();
+    FILE* f = fopen(file,'r');
 
+    if(f == NULL){
+        printf("Problème d'ouverture fichier \n");
+        return ;
+    }
 
-//Commit* ftc(char* file){
-//    Commit c = initCommit();
-//    return c;
-//} 
+    char buffer[256];
+    kvp* ptr;
+    while(fgets(buffer,sizeof(buffer),f) != NULL){
+        ptr = stkv(buffer);
+        commitSet(c,ptr->key,ptr->value);
+
+    }
+    fclose(f);
+    return ptr;
+} 
+
+char* blobCommit(Commit* c){
+    return "";
+}
