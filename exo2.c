@@ -660,7 +660,7 @@ Commit* initCommit(){
     c->T = tab;
     for(int i = c->n; i< c->size ; i++ ){
         c->T[i]->key = NULL;
-        c->T[i]->Value = NULL;
+        c->T[i]->value = NULL;
     }
     return c;
 }
@@ -713,17 +713,33 @@ char* cts(Commit* c){
 }
 
 void ctf(Commit* c, char* file){
-    FILE* dest = fopen(file);
+    FILE* dest = fopen(file,"w");
     if(dest == NULL){
         printf("Problème d'ouverture fichier \n");
         return ;
     }
-
+}
     
 
 Commit* ftc(char* file){
-    Commit c = initCommit();
+    Commit* c = initCommit();
     return c;
+}
+
+
+void initRefs(){
+/*cree le repertoire cache .refs (s’il n’existe pas
+deja), puis cree les fichiers master et HEAD (vides)*/
+	DIR * dir = opendir(".refs");
+	if(dir == NULL){
+		system("mkdir .refs");
+		system("touch .refs/master");
+		system("touch .refs/HEAD");
+		return;
+	}
+	system("touch .refs/master");
+	system("touch .refs/HEAD");
+	closedir(dir);
 }
 int main(){
 	List* l = initList();
