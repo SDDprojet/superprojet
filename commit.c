@@ -171,7 +171,7 @@ void ctf(Commit* c, char* file){ //dejà testé
 }
 
 Commit* ftc(char* file) {
-    Commit* c = initCommit(); // Supposons que la fonction initCommit() soit définie et renvoie un pointeur vers Commit
+    
     FILE* f = fopen(file, "r"); // Correction du mode d'ouverture du fichier
 
     if (f == NULL) {
@@ -180,11 +180,12 @@ Commit* ftc(char* file) {
     }
 
     char buffer[256];
-    kvp* ptr = NULL; // Déclaration et initialisation de la variable ptr
+    char chaine = malloc(sizeof(char)*strlen(buffer));
+    kvp* ptr = malloc(sizeof(kvp)); // Déclaration et initialisation de la variable ptr
     while (fgets(buffer, sizeof(buffer), f) != NULL) {
-        ptr = stkv(buffer); // Supposons que la fonction stkv() soit définie et renvoie un pointeur vers kvp
-        commitSet(c, ptr->key, ptr->value); // Supposons que la fonction commitSet() soit définie et modifie l'objet Commit c
+        strcat(chaine,buffer);
     }
+    Commit* c = stc(chaine);
     fclose(f);
     return c; // Retour du pointeur vers Commit c
 }

@@ -76,9 +76,11 @@ int main(){
     printf("commit get de la clé warintara return the value = %s \n",commitGet(c,"warintara"));
     printf("cts de commit c = %s \n",cts(c));
 
-    ctf(c,"test_ctf");
+    ctf(c,"test_ctf2");
 
-    //printf("ftc de test_ctf = %s",cts(ftc("test_ctf")));
+    printf("ftc de test_ctf = %s",cts(ftc("test_ctf2"))); 
+
+    //printf("stc = %s\n",stc(cts(c)));
 
 
 	return 0; 
