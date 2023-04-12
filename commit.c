@@ -125,31 +125,29 @@ char* cts(Commit* c){ //deja testé
     return chaine ;
 }
 
-Commit* stc(char* ch){ // à tester
-    Commit* c = initCommit();
-    char buffer[256]; // lecture de chaque ligne
+
+Commit* stc(char* ch) {
+    Commit* c = initCommit(); // Supposons que la fonction initCommit() soit définie et renvoie un pointeur vers Commit
+    char buffer[256]; // Lecture de chaque ligne
     int i = 0;
     int r = 0;
-    if(ch == NULL){
+    if (ch == NULL) {
         return c;
     }
-    while(ch[r] != '\0'){
-        if(ch[r] == '\n'){
-            buffer[i]= '\0';
-            kvp* ptr; 
-            ptr = stkv(buffer); //enregistre kv dans la vairiable 
-            commitSet(c,ptr->key,ptr->value); //sauvegarde ce kv dans commit 
-            freeKeyVal(ptr);
-            
-        }
-        else{
-            buffer[i]= ch[r];
+    kvp* ptr = NULL; // Déclaration de la variable ptr
+    while (ch[r] != '\0') {
+        if (ch[r] == '\n') {
+            buffer[i] = '\0';
+            ptr = stkv(buffer); // Enregistre kv dans la variable ptr
+            commitSet(c, ptr->key, ptr->value); // Sauvegarde ce kv dans commit
+            freeKeyVal(ptr); // Supposons que la fonction freeKeyVal() est définie et libère la mémoire allouée par ptr
+            i = 0; // Réinitialise i pour la prochaine ligne
+        } else {
+            buffer[i] = ch[r];
             i++;
         }
         r++;
-
     }
-    
     return c;
 }
 
@@ -172,26 +170,24 @@ void ctf(Commit* c, char* file){ //dejà testé
     fclose(dest);
 }
 
-Commit* ftc(char* file){ //à refaire
-    Commit* c = initCommit();
-    FILE* f = fopen(file,'r');
+Commit* ftc(char* file) {
+    Commit* c = initCommit(); // Supposons que la fonction initCommit() soit définie et renvoie un pointeur vers Commit
+    FILE* f = fopen(file, "r"); // Correction du mode d'ouverture du fichier
 
-    if(f == NULL){
+    if (f == NULL) {
         printf("Problème d'ouverture fichier \n");
-        return ;
+        return NULL; // Correction de la gestion d'erreur pour le cas d'échec d'ouverture de fichier
     }
 
     char buffer[256];
-    kvp* ptr;
-    while(fgets(buffer,sizeof(buffer),f) != NULL){
-        ptr = stkv(buffer);
-        commitSet(c,ptr->key,ptr->value);
-
+    kvp* ptr = NULL; // Déclaration et initialisation de la variable ptr
+    while (fgets(buffer, sizeof(buffer), f) != NULL) {
+        ptr = stkv(buffer); // Supposons que la fonction stkv() soit définie et renvoie un pointeur vers kvp
+        commitSet(c, ptr->key, ptr->value); // Supposons que la fonction commitSet() soit définie et modifie l'objet Commit c
     }
     fclose(f);
-    return ptr;
-} 
-
+    return c; // Retour du pointeur vers Commit c
+}
 char * blobCommit ( Commit * c ) {
     char fname[100] = " /tmp/myfileXXXXXX" ;
     int fd =mkstemp(fname);
