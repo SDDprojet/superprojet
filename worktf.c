@@ -10,6 +10,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <libgen.h>
+#include <errno.h>
 
 #define SIZE 20
 
@@ -157,69 +159,83 @@ char* blobWorkTree2(WorkTree* wt){
     system(command2);
     return hash;
 }
-/*
-int isFile(const char* name)
-{
-    DIR* directory = opendir(name);
 
-    if(directory != NULL)
-    {
-     closedir(directory);
-     return 0;//si c'est un directory
+char* conct(char* c1, char* c2){
+    char* ch = malloc(sizeof(char)*strlen(c1)+strlen(c2)+2);
+    sprintf(ch,"%s/%s",c1,c2);
+	return ch;
+}
+
+int isFile2(const char* name){
+    DIR* dir = opendir(name);
+    if (dir != NULL) {
+        printf("%s est un répertoire.\n", name);
+        closedir(dir);
+        return 0;
+    }
+    else {
+        FILE* file = fopen(name, "r");
+        if (file != NULL) {
+            printf("%s est un fichier.\n", name);
+            fclose(file);
+            return 1;
+        }
+        else {
+            printf("%s n'est pas un fichier et un répertoire .\n", name);
+            return -1;
+        }
     }
 
-    if(errno == ENOTDIR)
-    {
-     return 1;//si c'est un fichier
+    return -1;
+}
+
+char* saveWorkTree(WorkTree* wt, char* path){
+    int i =0;
+
+    while(i < wt->size){
+        if(isFile(conct(path,wt->tab[i].name))== 1){
+            blobFile(conct(path,wt->tab[i].name));
+            wt->tab[i].hash = sha256file(conct(path,wt->tab[i].name));
+            wt->tab[i].mode = getChmod(conct(path,wt->tab[i].name));
+
+        }else{
+            WorkTree* newWT = initWorkTree();
+            List* m = listdir(conct(path,wt->tab[i].name));
+            Cell *ptr = m;
+            while(ptr != NULL){
+                if(strncmp(ptr->data,".",1) != 0){
+					appendWorkTree(newWT,ptr->data,"lalal",0);
+				}
+				ptr=ptr->next;
+            }
+            wt->tab[i].hash = saveWorkTree(newWT,conc(path,wt->tab[i].name));
+			wt->tab[i].mode = getChmod(conc(path,wt->tab[i].name));
+
+        }
+        i++;
+    }
+    return blobWorkTree2(wt);
+}
+
+
+int isFile(const char* name){
+    DIR* directory = opendir(name);
+
+    if(directory != NULL){
+        return 0;//si c'est un répertoire 
+    }
+
+    if(errno == ENOTDIR){
+        return 1;//si c'est un fichier
     }
 
     return -1;//si le fichier ou le directory n'existe pas
 }
 
-char * conc(char* char1, char* char2){
-	char *  res = malloc(sizeof(char)*strlen(char1)+strlen(char2)+2);
-	sprintf(res,"%s/%s",char1,char2);
-	return res;
-}	
-char* saveWorkTree(WorkTree* wt, char* path){
-	if(wt == NULL || wt->n<=0 ){ // Si pas d'élément dans tab
-		return NULL;
-	}
-	//system("pwd");
-	//printf("path =%s\n",path);
-	//printf("DEBUT WT =%s\n",wtts(wt));
-	int i;
-	printf("n =%d\n",wt->n);
-	for(i=0; i<wt->n; i++){
-		printf("i =%d\n",i);
-		printf("nom courant =%s\n",wt->tab[i].name );
-		char* hash=malloc(sizeof(char)*255);
-		int mode;
-		if (isFile(conc(path,wt->tab[i].name))==1){
-			blobFile(conc(path,wt->tab[i].name));
-			hash=sha256file(conc(path,wt->tab[i].name));
-			mode=getChmod(conc(path,wt->tab[i].name));
-			wt->tab[i].mode=mode;
-			wt->tab[i].hash=hash;
-			printf("name %s \nmode %d \n hash %s \n",wt->tab[i].name,wt->tab[i].mode,wt->tab[i].hash);
-		}else{
-			WorkTree* newWT=initWorkTree();
-			List *L=listdir(conc(path,wt->tab[i].name));
-			Cell *ptr = *L;
-			int k = 0;
-			while(ptr!= NULL){
-				if(strncmp(ptr->data,".",1) != 0){
-					printf("%s\n",ptr->data);
-					appendWorkTree(newWT,ptr->data,"lalal",0);
-				}
-				ptr=ptr->next;
-			}
-			wt->tab[i].hash = saveWorkTree(newWT,conc(path,wt->tab[i].name));
-			wt->tab[i].mode = getChmod(conc(path,wt->tab[i].name));
-		}
-	}
-		return blobWorkTree(wt) ;
+void restoreWorkTree(WorkTree* wt, char* path){
+    
 }
+
 void restoreWorkTree(WorkTree* wt, char* path){
 	if(wt == NULL || wt->n<=0 ){ // Si pas d'élément dans tab
 		return ;
@@ -241,4 +257,4 @@ void restoreWorkTree(WorkTree* wt, char* path){
 
 	}
 }
-*/
+

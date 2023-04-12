@@ -15,10 +15,13 @@
 #define SIZE 20
 
 void initRefs():
-
+    return;
 
 void createUpdateRef(char* ref name, char* hash):
+    return;
 
 void deleteRef(char* ref name):
+    return;
 
 char* getRef(char* ref name):
+    return;

@@ -27,7 +27,7 @@ int main(){
     List* l3 = stol("warintara|the|pretiest|my |love");
     printf("%s\n",ltos(l3)); 
     printf("\n\n hastToPath avec fichier main.c = %s \n",hashToPath(sha256file("main.c")));
-    blobFile2("test_ltof.txt");
+    blobFile("main.c");
     
     printf("---------------Workfile-----------\n");
     WorkFile* wifi = createWorkFile("waifu");

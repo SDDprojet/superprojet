@@ -168,7 +168,7 @@ char* hashToPath(char* hash){
 void blobFile(char* file){
     if(file_exists(file)==0){
         printf("Erreur : le fichier %s n'existe pas\n", file);
-        return ;
+        return  ;
     }
     char* hash = sha256file(file);
     char* chemin = hashToPath(hash);
@@ -179,8 +179,11 @@ void blobFile(char* file){
 }
 void blobFile2(char* file){
     char* hash = sha256file(file) ;
+    printf("hash = %s \n",hash);
     char* ch2 = strdup(hash) ;
+    printf("%s \n ",ch2);
     ch2[2] = '\0' ;
+    printf("%s \n ",ch2);
     if (!file_exists(ch2)){
        char buff[100];
        sprintf(buff,"mkdir %s",ch2);
