@@ -171,7 +171,6 @@ void ctf(Commit* c, char* file){ //dejà testé
 }
 
 Commit* ftc(char* file) {
-    
     FILE* f = fopen(file, "r"); // Correction du mode d'ouverture du fichier
 
     if (f == NULL) {
@@ -180,13 +179,15 @@ Commit* ftc(char* file) {
     }
 
     char buffer[256];
-    char chaine = malloc(sizeof(char)*strlen(buffer));
+    char* chaine = malloc(sizeof(char) * 256); // Allocation de mémoire pour la variable chaine
     kvp* ptr = malloc(sizeof(kvp)); // Déclaration et initialisation de la variable ptr
     while (fgets(buffer, sizeof(buffer), f) != NULL) {
-        strcat(chaine,buffer);
+        strcat(chaine, buffer);
     }
     Commit* c = stc(chaine);
     fclose(f);
+    free(chaine); // Libération de la mémoire allouée pour chaine
+    free(ptr); // Libération de la mémoire allouée pour ptr
     return c; // Retour du pointeur vers Commit c
 }
 char * blobCommit ( Commit * c ) {
