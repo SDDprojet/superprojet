@@ -68,5 +68,7 @@ char* getRef(char* ref_name){
 
     return ligne;
 }
-
+void myGitAdd(char* file_or_folder){
+    
+}
     
