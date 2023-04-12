@@ -208,8 +208,8 @@ char* saveWorkTree(WorkTree* wt, char* path){
 				}
 				ptr=ptr->next;
             }
-            wt->tab[i].hash = saveWorkTree(newWT,conc(path,wt->tab[i].name));
-			wt->tab[i].mode = getChmod(conc(path,wt->tab[i].name));
+            wt->tab[i].hash = saveWorkTree(newWT,conct(path,wt->tab[i].name));
+			wt->tab[i].mode = getChmod(conct(path,wt->tab[i].name));
 
         }
         i++;
@@ -232,9 +232,6 @@ int isFile(const char* name){
     return -1;//si le fichier ou le directory n'existe pas
 }
 
-void restoreWorkTree(WorkTree* wt, char* path){
-    
-}
 
 void restoreWorkTree(WorkTree* wt, char* path){
 	if(wt == NULL || wt->n<=0 ){ // Si pas d'élément dans tab
@@ -247,12 +244,12 @@ void restoreWorkTree(WorkTree* wt, char* path){
 		wf_current = &(wt->tab[i]);
 		int nb_char = strlen(wf_current->hash);
 		if(wf_current->hash[nb_char-2] != '.'){// S'il sagit d'un fichier
-			cp(conc(path,wf_current->name),hashToPath(wf_current->hash));
-			setMode(wf_current->mode,conc(path,wf_current->name));
+			cp(conct(path,wf_current->name),hashToPath(wf_current->hash));
+			setMode(wf_current->mode,conct(path,wf_current->name));
 
 		}else{
 			WorkTree* newWT = ftwt(hashToPath(wf_current->hash));
-			restoreWorkTree(newWT,conc(path,wf_current->name));
+			restoreWorkTree(newWT,conct(path,wf_current->name));
 		}
 
 	}

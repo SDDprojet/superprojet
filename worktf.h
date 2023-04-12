@@ -39,5 +39,14 @@ char* hashToFile (char* hash );
 
 char* blobWorkTree2(WorkTree* wt);
 
+void restoreWorkTree(WorkTree* wt, char* path);
+
+char* conct(char* c1, char* c2);
+
+int isFile2(const char* name);
+
+char* saveWorkTree(WorkTree* wt, char* path);
+
+int isFile(const char* name);
 
 #endif 
