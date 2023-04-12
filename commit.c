@@ -124,6 +124,27 @@ char* cts(Commit* c){ //deja testé
     }
     return chaine ;
 }
+char *cts(Commit *c) {
+    int i = 0;
+    int chaine_len = 0;
+    int max_len = sizeof(char) * 100 * c->n;
+    char *chaine = calloc(max_len, sizeof(char));
+    while (i < c->size) {
+        if (c->T[i] != NULL) {
+            char *temp = kvts(c->T[i]);
+            if (chaine_len + strlen(temp) + 1 < max_len) {
+                strcat(chaine, temp);
+                strcat(chaine, "\n");
+                chaine_len += strlen(temp) + 1;
+            } else {
+                printf("Erreur: dépassement de tampon\n");
+                break;
+            }
+        }
+        i++;
+    }
+    return chaine;
+}
 
 
 Commit *stc(char *ch) {
