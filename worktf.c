@@ -136,7 +136,7 @@ char* hashToFile (char* hash ) {
  struct stat st;
  ch2[2] = '\0' ;
  if(stat(ch2,&st) == -1) {
- mkdir ( ch2, 0700) ;
+ mkdir ( ch2) ;
  }
  return hashToPath ( hash ) ;
  }

@@ -126,31 +126,27 @@ char* cts(Commit* c){ //deja testé
 }
 
 
-Commit* stc(char* ch) {
-    Commit* c = initCommit(); // Supposons que la fonction initCommit() soit définie et renvoie un pointeur vers Commit
-    char buffer[256]; // Lecture de chaque ligne
-    int i = 0;
-    int r = 0;
-    if (ch == NULL) {
-        return c;
-    }
-    kvp* ptr = NULL; // Déclaration de la variable ptr
-    while (ch[r] != '\0') {
-        if (ch[r] == '\n') {
-            buffer[i] = '\0';
-            ptr = stkv(buffer); // Enregistre kv dans la variable ptr
-            commitSet(c, ptr->key, ptr->value); // Sauvegarde ce kv dans commit
-            freeKeyVal(ptr); // Supposons que la fonction freeKeyVal() est définie et libère la mémoire allouée par ptr
-            i = 0; // Réinitialise i pour la prochaine ligne
-        } else {
-            buffer[i] = ch[r];
-            i++;
-        }
-        r++;
+Commit *stc(char *ch) {
+    int pos = 0;
+    int n_pos = 0;
+    int sep = '\n';
+    char *ptr;
+    char *result = malloc(sizeof(char) * 10000);
+    Commit *c = initCommit(10);
+    while (pos < strlen(ch)) {
+        ptr = strchr(ch + pos, sep);
+        if (ptr == NULL)
+            n_pos = strlen(ch) + 1;
+        else
+            n_pos = ptr - ch + 1;
+        memcpy(result, ch + pos, n_pos - pos - 1);
+        result[n_pos - pos - 1] = '\0';
+        pos = n_pos;
+        kvp *elem = stkv(result);
+        commitSet(c, elem->key, elem->value);
     }
     return c;
 }
-
 void ctf(Commit* c, char* file){ //dejà testé 
     FILE* dest = fopen(file,"w");
     if(dest == NULL){
@@ -191,7 +187,7 @@ Commit* ftc(char* file) {
     return c; // Retour du pointeur vers Commit c
 }
 char * blobCommit ( Commit * c ) {
-    char fname[100] = " /tmp/myfileXXXXXX" ;
+    char fname[100] = "/tmp/myfileXXXXXX" ;
     int fd =mkstemp(fname);
     ctf(c,fname);
     char *hash = sha256file(fname) ;
