@@ -27,6 +27,7 @@ WorkTree* initWorkTree();
 int inWorkTree(WorkTree* wt, char* name);
 
 int appendWorkTree(WorkTree* wt, char* name, char* hash, int mode);
+/*qui ajoute un fichier ou r ́epertoire au WorkTree (s’il n’existe pas d éjà*/
 
 char* wtts(WorkTree* wt);
 
