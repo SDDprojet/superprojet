@@ -91,8 +91,17 @@ void myGitCheckoutCommit(char* pattern){ // à faire
     
     if(size_list(filter_list) == 1 ){ // si il y a un seul élément
         createUpdateRef("HEAD",filter_list->data);
+        return;
     }
 
-    
+    if(size_list(filter_list) == 0){
+        printf("erreur : il y a pas le hash \n")
+        return;
+    }
+
+    if(size_list(filter_list) > 1){ // à continuer 
+        printf("Il y a plusieurs commit, possible souhaitez-vous aller dans quel commit? \n")
+    }
+
 
 }

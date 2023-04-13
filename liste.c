@@ -199,7 +199,7 @@ void blobFile2(char* file){
     int cpt = 0;
     while(l != NULL){
         cpt++;
-        l = l-> next
+        l = l-> next;
     }
     return cpt;
  }
