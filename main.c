@@ -80,7 +80,9 @@ int main(){
 
     printf("ftc de test_ctf = %s",cts(ftc("test_ctf2"))); 
 
-    //printf("stc = %s\n",stc(cts(c)));
+    char* ss = cts(c);
+    //printf("stc = %s\n",stc(ss));
+    //stc(ss)
 
 
 	return 0; 

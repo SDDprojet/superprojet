@@ -32,7 +32,7 @@ char* kvts(kvp* k){ //deja testé
 		return NULL;
 	}
 	char *chaine = (char *)malloc(sizeof(char)*255);
-	sprintf(chaine,"%s :%s",k->key,k->value);
+	snprintf(chaine,255,"%s :%s",k->key,k->value);
 	return chaine;
 }
 
@@ -111,7 +111,7 @@ char* commitGet(Commit* c,char* key){ //deja testé
     return NULL;
 }
 
-char* cts(Commit* c){ //deja testé
+char* cts2(Commit* c){ //deja testé
     int i =0;
     char* chaine = malloc(sizeof(char)*100*c->n ) ;
     while(i < c->size){
@@ -128,7 +128,11 @@ char *cts(Commit *c) {
     int i = 0;
     int chaine_len = 0;
     int max_len = sizeof(char) * 100 * c->n;
-    char *chaine = calloc(max_len, sizeof(char));
+    char *chaine = malloc(max_len*sizeof(char));
+    if(chaine != NULL){
+        memset(chaine,0,max_len*sizeof(char));
+
+    }
     while (i < c->size) {
         if (c->T[i] != NULL) {
             char *temp = kvts(c->T[i]);
