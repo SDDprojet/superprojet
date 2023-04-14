@@ -56,7 +56,7 @@ void restoreCommit(char* hash_commit){ // à tester
 
 }
 
-int commence_meme(char* c1, char* c2){
+int commence_par(char* c1, char* c2){
     int i = 0;
     if(strlen(c1) < strlen(c2)){
         return 0;
@@ -70,7 +70,7 @@ int commence_meme(char* c1, char* c2){
     return 1;
 }
 
-List* filterList(List* L, char* pattern){ // à faire
+List* filterList(List* L, char* pattern){
     List* l = initList();
     while(L != NULL){
         if(commence_meme(L->data,pattern)== 1){
@@ -83,7 +83,7 @@ List* filterList(List* L, char* pattern){ // à faire
 
 
 
-void myGitCheckoutCommit(char* pattern){ // à faire
+void myGitCheckoutCommit(char* pattern){ 
     //recupere tous les commits 
     List* list_commit = getAllCommit();
     //filtre la liste
@@ -99,8 +99,15 @@ void myGitCheckoutCommit(char* pattern){ // à faire
         return;
     }
 
-    if(size_list(filter_list) > 1){ // à continuer 
-        printf("Il y a plusieurs commit, possible souhaitez-vous aller dans quel commit? \n")
+    if(size_list(filter_list) > 1){
+        char commit;
+        printf("Il y a plusieurs commit possibles, souhaitez-vous aller dans quel commit? \n")
+        for (Cell* p = *filter_list ; p != NULL && commit != 'o\0'; p = p-> next ) {
+            printf("-> %s \n" , ptr->data ) ;
+            printf("voulez-vous choisir ce commit? : o/n \n");
+            scanf("%c",commit);
+        }
+        createUpdateRef("HEAD",p->data);
     }
 
 

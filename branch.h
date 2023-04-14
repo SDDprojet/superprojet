@@ -9,6 +9,8 @@ void createBranch(char* branch);
 
 char* getCurrentBranch();
 
+char* hashTopathCommit(char* hash);
+
 void printBranch(char* branch);
 
 List* branchList(char* branch);
