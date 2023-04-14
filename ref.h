@@ -1,4 +1,4 @@
-#ifndef ref_h
+#ifndef ref_H
 #define ref_H
 
 void initRefs();
@@ -9,6 +9,7 @@ void deleteRef(char* ref_name);
 
 char* getRef(char* ref_name) ;
 
+void createFile(char* file);
 void myGitAdd(char* file_or_folder);
 
 void myGitCommit(char* branch_name, char* message);

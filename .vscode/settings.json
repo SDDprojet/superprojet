@@ -3,6 +3,8 @@
     "files.associations": {
         "branch.h": "c",
         "types.h": "c",
-        "stat.h": "c"
+        "stat.h": "c",
+        "liste.h": "c",
+        "stdlib.h": "c"
     }
 }

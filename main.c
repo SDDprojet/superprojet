@@ -2,6 +2,7 @@
 #include "commit.h"
 #include "filehash.h"
 #include "liste.h"
+#include "ref.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -85,6 +86,7 @@ int main(){
     //stc(ss)
 
     printf("-------------------Exercice 7-----------------\n");
+    
 
 	return 0; 
 }

@@ -1,4 +1,5 @@
 #include "worktf.h"
+#include "ref.h"
 #include "commit.h"
 #include "filehash.h"
 #include "liste.h"
@@ -12,7 +13,7 @@
 #include <fcntl.h>
 #include <dirent.h>
 
-void main (int argc , char* argv[]){
+int main (int argc , char* argv[]){
     if(strcmp(argv[1],"init")== 0){
         initRefs();
     }
@@ -21,7 +22,7 @@ void main (int argc , char* argv[]){
         if(file_exists(".refs")){
             List* L = listdir(".refs") ;
             for( Cell* ptr = *L ; ptr != NULL ; ptr = ptr -> next ){
-                if (ptr -> data [0] == ’ . ’){
+                if (ptr -> data [0] == '.'){
                     continue ;}
                 char* content = getRef(ptr->data);
                     printf("- %s \t %s \n", ptr->data,content);
@@ -32,7 +33,7 @@ void main (int argc , char* argv[]){
         createUpdateRef(argv[2],argv[3]) ;
     }
     if (strcmp(argv[1] , "delete-ref" ) == 0) {
-        delete(argv[2]) ;
+        deleteRef(argv[2]) ;
     }
     if (strcmp(argv[1] , "add" ) == 0) {
         for( int i = 2; i < argc ; i ++) {
