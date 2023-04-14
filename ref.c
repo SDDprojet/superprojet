@@ -32,19 +32,16 @@ void createUpdateRef(char* ref_name, char* hash){ //à tester
         return;
     }
     if(file_exists(ref_name) == 0){
-        char command1[100];
+        char command1[256];
         sprintf(command1,"mkdir %s",ref_name);
         system(command1);
-        char command2[100];
+        char command2[256];
         sprintf(command2," echo %s > %s",ref_name,hash);
         system(command2);
-        free(command1);
-        free(command2);
     }
-    char command3[100];
+    char command3[256];
     sprintf(command3,"echo %s > %s",ref_name,hash);
     system(command3);
-    free(command3);
 }
 
 void deleteRef(char* ref_name){ //à tester
@@ -55,10 +52,9 @@ void deleteRef(char* ref_name){ //à tester
         printf("fichier n'existe pas, il n'y a pas à supprimer! \n");
         return ;
     }
-    char command[100];
+    char command[256];
     sprintf(command,"rm .ref/%s",ref_name);
     system(command);
-    free(command);
     return;
 
 }
@@ -75,15 +71,15 @@ char* getRef(char* ref_name){
         printf("erreur d'ouverture de ficher \n");
         return;
     }
-    char ligne[100];
-    fgets(ligne,100,f) ;
+    char ligne[256];
+    fgets(ligne,256,f) ;
     fclose (f) ;
 
     return ligne;
 }
 
 void createFile(char* file) {
-    char buff[100];
+    char buff[256];
     sprintf(buff,"touch %s",file);
     system(buff);
 }
