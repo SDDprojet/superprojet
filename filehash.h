@@ -1,5 +1,5 @@
-#ifndef filehash_H
-#define filehash_H
+#ifndef FILEHASH_H
+#define FILEHASH_H
 
 
 int hashFile(char* source, char* dest);

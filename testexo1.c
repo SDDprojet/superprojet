@@ -1,10 +1,40 @@
-#include "liste.h"
-#include "filehash.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
 
+typedef struct cell{
+char* data ;
+struct cell* next ;
+}Cell ;
+
+typedef Cell* List ;
+int hashFile(char* source, char* dest){
+    char buffer[256];
+    sprintf(buffer,"cat %s | sha256sum >>%s",source,dest);
+    system(buffer) ;
+    return 0;
+}
+char* sha256file(char* file){
+    static char template[] ="/tmp/myfileXXXXXX" ;
+    char fname[1000];
+    char line[256];
+    strcpy(fname,template);
+    int fd=mkstemp(fname) ;
+    hashFile(file,fname);
+    char* buffer;
+    buffer=malloc(sizeof(char)*256);
+    FILE* f = fopen(fname,"r");
+    fgets(line,256,f); 
+    sscanf(line,"%s",buffer);
+    fclose(f);
+    
+
+    return buffer;
+    
+
+}
 List* initList(){
     List* l=(List*)(malloc(sizeof(List)));
     *l=NULL;
@@ -246,7 +276,7 @@ void blobFile(char* file){
     system(command1);
     cp(chemin,file);
 }
-/*void blobFile2(char* file){
+void blobFile2(char* file){
     char* hash = sha256file(file) ;
     printf("hash = %s \n",hash);
     char* ch2 = strdup(hash) ;
@@ -261,7 +291,6 @@ void blobFile(char* file){
     char* ch=hashToPath(hash);
     cp(ch,file);
  }
- */
 
 int size_list(List l) {
     int cpt = 0;
@@ -272,26 +301,53 @@ int size_list(List l) {
     return cpt;
 }
 
-int main() {
-    List* L = initList();
-    Cell* C1 = buildCell("Hello");
-    Cell* C2 = buildCell("World");
-    insertFirst(L, C1);
-    insertFirst(L, C2);
-    char* s = ltos(L);
-    printf("Liste : %s\n", s);
-    Cell* C3 = searchList(L, "World");
-    if (C3 != NULL) {
-        printf("Element trouvé : %s\n", C3->data);
-    } else {
-        printf("Element non trouvé\n");
-    }
-    freeList(L);
 
-    List* L2 = listdir(".");
-    char* s2 = ltos(L2);
-    printf("Contenu du répertoire : %s\n", s2);
-    freeList(L2);
+int main(){
+
+    // Initialisation de la liste
+    List* myList = initList();
+
+    // Insertion de cellules en début de liste
+    Cell* cell1 = buildCell("Hello");
+    Cell* cell2 = buildCell("World");
+    insertFirst(myList, cell1);
+    insertFirst(myList, cell2);
+
+    // Recherche d'une cellule dans la liste
+    Cell* cell3 = searchList(myList, "World");
+    if (cell3 != NULL) {
+        printf("Cellule trouvée : %s\n", cell3->data);
+    } else {
+        printf("Cellule non trouvée\n");
+    }
+
+    // Insertion de cellules en fin de liste
+    Cell* cell4 = buildCell("Test");
+    Cell* cell5 = buildCell("Liste");
+    insertLast(myList, cell4);
+    insertLast(myList, cell5);
+
+    // Conversion de liste en chaîne de caractères
+    char* listToString = ltos(myList);
+    printf("Liste en chaîne de caractères : %s\n", listToString);
+
+    // Conversion de chaîne de caractères en liste
+    List* stringToList = stol(listToString);
+    printf("Chaîne de caractères convertie en liste : ");
+
+
+    // Sauvegarde de la liste dans un fichier
+    ltof(myList, "liste.txt");
+    printf("Liste sauvegardée dans le fichier liste.txt\n");
+
+    // Chargement de la liste depuis un fichier
+    List* loadedList = ftol("liste.txt");
+    printf("Liste chargée depuis le fichier liste.txt : ");
+
+    // Libération de la mémoire allouée
+    freeList(myList);
+    freeList(stringToList);
+    freeList(loadedList);
 
     return 0;
 }
