@@ -14,12 +14,12 @@ List* initList(){
 Cell* buildCell(char* ch){
     Cell* c = (Cell*)(malloc(sizeof(Cell)));
     if(c==NULL){
-        printf("Erreur d'allocation mémoire");
+        printf("Erreur d'allocation mémoire : bc");
         return NULL;
     }
     c->data = strdup(ch);
     if(c->data==NULL){
-        printf("Erreur d'allocation mémoire");
+        printf("Erreur d'allocation mémoire :bc");
         return NULL;
     }
     c->next = NULL;
@@ -48,7 +48,7 @@ char* ctos(Cell* c){
 char* ltos(List* L){
     char * res = malloc(1000);
     if(res==NULL){
-        printf("Erreur d'allocation mémoire");
+        printf("Erreur d'allocation mémoire ltos");
         return NULL;
     }
     res[0]='\0'
@@ -152,7 +152,7 @@ List* stol(char* s){
 void ltof(List* L, char* path){
     FILE * f = fopen(path, "w");
     if(f==NULL){
-        printf("Erreur d'ouverture du fichier %s\n",path);
+        printf("Erreur d'ouverture du fichier ltof %s\n",path);
         return;
     }
     char * chaine = ltos(L);
@@ -163,7 +163,7 @@ void ltof(List* L, char* path){
 List* ftol(char* path){
     FILE * f = fopen(path, "r");
     if(f==NULL){
-        printf("Erreur d'ouverture du fichier %s\n",path);
+        printf("Erreur d'ouverture du fichierftol  %s\n",path);
         return NULL;
     }
     char buffer[256];
@@ -194,17 +194,17 @@ int file_exists(char *file){
 }
 void cp(char *to, char *from){
     if(file_exists(to)==0){
-        printf("le fichier %s n'existe pas\n",to );
+        printf("le fichier %s n'existe pas cp\n",to );
         return ;
     }
     FILE * source = fopen(from, "r");
     if(source ==NULL){
-        printf("Erreur d'ouverture du fichier %s\n",from);
+        printf("Erreur d'ouverture du fichier cp %s\n",from);
         return;
     }
     FILE * dest = fopen(to, "w");
     if(dest ==NULL){
-        printf("Erreur d'ouverture du fichier %s\n",to);
+        printf("Erreur d'ouverture du fichier cp %s\n",to);
         fclose(source);
         return;
     }
@@ -226,7 +226,7 @@ char* hashToPath2(char* hash){
 char* hashToPath(char* hash){
     char* res = malloc(strlen(hash)+3);
     if(res == NULL){
-        printf("Erreur d'allocation de mémoire\n");
+        printf("Erreur d'allocation de mémoire htp\n");
         return NULL;
     }
     
@@ -236,7 +236,7 @@ char* hashToPath(char* hash){
 
 void blobFile(char* file){
     if(file_exists(file)==0){
-        printf("Erreur : le fichier %s n'existe pas\n", file);
+        printf("Erreur : le fichier %s n'existe pas bf\n", file);
         return  ;
     }
     char* hash = sha256file(file);

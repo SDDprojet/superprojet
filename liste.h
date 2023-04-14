@@ -40,7 +40,8 @@ Cell* searchList(List* L, char* str);
 
 List* listdir(char* root_dir);
 //donner une liste des fichiers existés dans ce chemin 
-
+void freeList(List* l);
+//liberer la liste
 int file_exists(char *file);
 //indique si file existe retourne 1, 0 sinon 
 

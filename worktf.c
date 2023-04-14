@@ -34,13 +34,26 @@ void setMode(int mode , char* path){
 
 WorkFile* createWorkFile(char* name) {
     WorkFile* wf = (WorkFile*)malloc(sizeof(WorkFile));
+    if(wf==NULL){
+        printf("Erreur d'allocation mémoire\n");
+        return NULL;
+    }
     wf->name = strdup(name);
+    if(wf->name==NULL){
+        printf("Erreur d'allocation mémoire\n");
+        free(wf);
+        return NULL;
+    }
     wf->hash = NULL;
     wf->mode = 0;
     return wf;
 }
 char* wfts(WorkFile* wf) {
     char* ch = malloc(1000*sizeof(char)) ;
+    if(ch==NULL){
+        printf("Erreur d'allocation mémoire\n");
+        return NULL;
+    }
     sprintf( ch , "%s \t %s \t %d" , wf->name , wf->hash , wf->mode ) ;
     return ch ;
 }
@@ -49,7 +62,10 @@ WorkFile* stwf(char* ch) {
     char name[100];
     char hash[100];
     int mode;
-    sscanf(ch,"%s\t%s\t%d",name,hash,&mode);
+    if(sscanf(ch,"%s\t%s\t%d",name,hash,&mode)!=3){
+        printf("Erreur de lecture : stwf\n");
+        return NULL;
+    }
     WorkFile* wf = createWorkFile(name);
     wf->hash = strdup(hash);
     wf->mode = mode;
@@ -77,24 +93,27 @@ int appendWorkTree(WorkTree* wt, char* name, char* hash, int mode) {
     int index = inWorkTree(wt, name); // Vérifie si le fichier ou répertoire est déjà présent
 
     if (index == -1) { // Si le fichier ou répertoire n'existe pas
-        if(wt->size == wt->n){
+        if(wt->n == wt->size){
             printf("Le WorkTree est complet\n");
             return 1;
-        }else{// Crée une nouvelle entrée dans le WorkTree
-        WorkFile* wf = createWorkFile(name);
-        wf->hash = strdup(hash);
-        wf->mode = mode;
-        wt->tab[wt->n] = *wf;
-        wt->n++;
-        return 0;
+        } else {// Crée une nouvelle entrée dans le WorkTree
+            WorkFile* wf = createWorkFile(name);
+            wf->hash = strdup(hash);
+            wf->mode = mode;
+            wt->tab[wt->n] = *wf;
+            wt->n++;
+            return 0;
         }
-    }return 1;
+    }
+    return 1;
 }
 char* wtts(WorkTree* wt){
     char * chaine = malloc(256*sizeof(char));
     chaine[0] = '\0';
     for (int i = 0; i < wt->n; i++){
-        strcat(chaine,wfts(&(wt->tab[i])));
+        char* res=wfts(&(wt->tab[i]));
+        strcat(chaine,res);
+        free(res);
         if(i != wt->n-1){ 
             strcat(chaine,"\n");
         }
@@ -107,6 +126,7 @@ int wttf(WorkTree* wt, char* file){
     FILE* f = fopen(file,"w");
     if (f==NULL){
     	printf("Erreur ouverture fichier\n");
+        free(chaine);
         return 1;;
     }
     fprintf(f,"%s",chaine);
@@ -125,6 +145,7 @@ WorkTree* ftwt(char* file){
     WorkFile* wf;
 	char buffer[100];
 	while(fgets(buffer,100,f) != NULL){
+        buffer[strcspn(buffer, "\n")] = '\0';
         wf = stwf(buffer);
         appendWorkTree(wt,wf->name,wf->hash,wf->mode);
     }
@@ -152,7 +173,7 @@ char* blobWorkTree2(WorkTree* wt){
     char* chemin = hashToPath(hash);
     strcat(chemin,".t");
     char command1[500];
-    sprintf(command1, "mkdir %c%c",chemin[0],chemin[1]);
+    sprintf(command1, "mkdir -p %c%c",chemin[0],chemin[1]);
     system(command1);
     char command2[500];
     sprintf(command2, "cat %s > %s",fname,chemin);
@@ -166,7 +187,7 @@ char* conct(char* c1, char* c2){
 	return ch;
 }
 
-int isFile2(const char* name){
+int isFile(const char* name){
     DIR* dir = opendir(name);
     if (dir != NULL) {
         printf("%s est un répertoire.\n", name);
@@ -185,32 +206,34 @@ int isFile2(const char* name){
             return -1;
         }
     }
-
-    return -1;
 }
 
 char* saveWorkTree(WorkTree* wt, char* path){
     int i =0;
+    char*  hash;
+    char* blobHash;
 
     while(i < wt->size){
         if(isFile(conct(path,wt->tab[i].name))== 1){
             blobFile(conct(path,wt->tab[i].name));
-            wt->tab[i].hash = sha256file(conct(path,wt->tab[i].name));
+            hash=sha256file(conct(path,wt->tab[i].name));
+            wt->tab[i].hash = strdup(hash);
             wt->tab[i].mode = getChmod(conct(path,wt->tab[i].name));
-
+            free(hash);
         }else{
             WorkTree* newWT = initWorkTree();
             List* m = listdir(conct(path,wt->tab[i].name));
-            Cell *ptr = m;
+            Cell* ptr = m;
             while(ptr != NULL){
                 if(strncmp(ptr->data,".",1) != 0){
 					appendWorkTree(newWT,ptr->data,"lalal",0);
 				}
 				ptr=ptr->next;
             }
-            wt->tab[i].hash = saveWorkTree(newWT,conct(path,wt->tab[i].name));
+            hash=saveWorkTree(newWT,conct(path,wt->tab[i].name));
+            wt->tab[i].hash =strdup(hash);
 			wt->tab[i].mode = getChmod(conct(path,wt->tab[i].name));
-
+            free(hash);
         }
         i++;
     }
