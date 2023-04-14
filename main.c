@@ -84,6 +84,7 @@ int main(){
     //printf("stc = %s\n",stc(ss));
     //stc(ss)
 
+    printf("-------------------Exercice 7-----------------\n");
 
 	return 0; 
 }

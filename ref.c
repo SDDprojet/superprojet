@@ -68,6 +68,29 @@ char* getRef(char* ref_name){
 
     return ligne;
 }
+
+void createFile(char* file) {
+    char buff [100];
+    sprintf(buff,"touch %s",file);
+    system(buff);
+}
+ 
+void myGitAdd ( char * file_or_folder ){
+    WorkTree * wt ;
+    if (file_exists(".add")== 0 ){
+        createFile ( ".add") ;
+        wt = initWorkTree () ;
+    }else{
+        wt = ftwt (". add") ;
+    }
+    if(file_exists(file_or_folder) == 1){
+        appendWorkTree ( wt , file_or_folder , 0 , NULL ) ;
+        wttf ( wt ,". add") ;
+    }else{
+        printf("fichier/repertpoire %s n'existe pas \n",file_or_folder);
+    }
+}
+
 void myGitCommit(char* branch_name, char* message){
     if(file_exists(".refs") == 0){
         printf("Initialiser d'abord les références du projet \n");
