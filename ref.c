@@ -14,7 +14,7 @@
 #include <dirent.h>
 #define SIZE 20
 
-void initRefs(){ // à tester 
+void initRefs(){ // déjà tester 
     DIR* dir =opendir(".refs");
     if(dir == NULL){
         system("mkdir .refs");
@@ -27,33 +27,35 @@ void initRefs(){ // à tester
     closedir(dir);
 }
 
-void createUpdateRef(char* ref_name, char* hash){ //à tester
+void createUpdateRef(char* ref_name, char* hash){ //déjà tester
     if(ref_name == NULL || hash == NULL){
         return;
     }
     if(file_exists(ref_name) == 0){
         char command1[256];
-        sprintf(command1,"mkdir %s",ref_name);
+        sprintf(command1,"touch .refs/%s",ref_name);
         system(command1);
         char command2[256];
-        sprintf(command2," echo %s > %s",ref_name,hash);
+        sprintf(command2," echo %s > .refs/%s",hash,ref_name);
         system(command2);
     }
     char command3[256];
-    sprintf(command3,"echo %s > %s",ref_name,hash);
+    sprintf(command3,"echo %s > .refs/%s",hash,ref_name);
     system(command3);
 }
 
-void deleteRef(char* ref_name){ //à tester
+void deleteRef(char* ref_name){ //me marhce pas
     if(ref_name == NULL){
         return ;
     }
-    if(file_exists(ref_name) == 0){
+    char path[100];
+    sprintf(path,".refs/%s",ref_name);
+    if(file_exists(path) == 0){
         printf("fichier n'existe pas, il n'y a pas à supprimer! \n");
         return ;
     }
     char command[256];
-    sprintf(command,"rm .ref/%s",ref_name);
+    sprintf(command,"rm .refs/%s",ref_name);
     system(command);
     return;
 

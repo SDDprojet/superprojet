@@ -13,8 +13,8 @@
 #include <fcntl.h>
 #include <dirent.h>
 
-int main (int argc , char* argv[]){
-    if(strcmp(argv[1],"init")== 0){
+void main (int argc , char* argv[]){
+    if(strcmp(argv[1],"init")== 0){ //marche
         initRefs();
     }
     if (strcmp(argv[1],"ref-list") == 0){
@@ -29,10 +29,10 @@ int main (int argc , char* argv[]){
             }
         }
     }
-    if(strcmp(argv[1],"create-ref") == 0) {
+    if(strcmp(argv[1],"create-ref") == 0) { //marche 
         createUpdateRef(argv[2],argv[3]) ;
     }
-    if (strcmp(argv[1] , "delete-ref" ) == 0) {
+    if (strcmp(argv[1] , "delete-ref" ) == 0) { //marhce pas 
         deleteRef(argv[2]) ;
     }
     if (strcmp(argv[1] , "add" ) == 0) {
@@ -57,5 +57,4 @@ int main (int argc , char* argv[]){
             myGitCommit ( argv[2] , NULL ) ;
         }
     }
-    return 0;
  }
