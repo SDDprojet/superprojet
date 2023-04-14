@@ -2,6 +2,7 @@
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
         "branch.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "stat.h": "c"
     }
 }
