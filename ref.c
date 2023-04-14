@@ -1,5 +1,5 @@
-#include "worktf.h"
 #include "ref.h"
+#include "worktf.h"
 #include "filehash.h"
 #include "liste.h"
 #include "commit.h"
@@ -68,7 +68,44 @@ char* getRef(char* ref_name){
 
     return ligne;
 }
-void myGitAdd(char* file_or_folder){
+void myGitCommit(char* branch_name, char* message){
+    if(file_exists(".refs") == 0){
+        printf("Initialiser d'abord les références du projet \n");
+        return;
+    }
+    //comparer si head et branch name pointent vers la memem chose 
+    char[256] ch;
+    sprintf(ch,".refs/%s",branch_name);
+    if(file_exists(ch) == 0){
+        printf("la branch n'existe pas \n");
+        return;
+    }
+    char* bn_ref = getRef(branch_name);
+    char* head_ref = getRef("HEAD");
+    if(strcmp(bn_ref,head_ref) != 0){
+        printf("HEAD doir pointer sur le dernier commit de la branch \n");
+        return ;
+    }
+    //charger worktree puis le supprimer
+    WorkTree* wt = ftwt(".add");
+    system("rm .add");
+    //enregistrer instantané de ce worktree et recuperer son hash
+    char* hashwt = saveWorkTree(wt,".");
+    //creer commit c
+    Commit* c = createCommit(hashwt);
+    //lire le fichier branch_name
+    char*  predecessor = getRef(branch_name);
     
+    if(strlen(predecessor) != 0){
+        commitSet(c,"predecessor",bn_ref);
+    }
+    if(message != NULL){
+        commitSet(c,"message",message);
+    }
+    char *commit_hash = blobCommit(c);
+	createUpdateRef(branch_name, commit_hash);
+	createUpdateRef("HEAD", commit_hash);
+
+
 }
     

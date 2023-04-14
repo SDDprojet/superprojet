@@ -42,7 +42,7 @@ List* listdir(char* root_dir);
 //donner une liste des fichiers existés dans ce chemin 
 
 int file_exists(char *file);
-//indique si file existe 
+//indique si file existe retourne 1, 0 sinon 
 
 List* stol(char* s);
 // transforme une chaine de caracteres representant une liste en une liste chainee
