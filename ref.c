@@ -27,15 +27,25 @@ void initRefs(){ // à tester
     closedir(dir);
 }
 
-void createUpdateRef(char* ref_name, char* hash): //à tester
+void createUpdateRef(char* ref_name, char* hash){ //à tester
     if(ref_name == NULL || hash == NULL){
         return;
     }
     if(file_exists(ref_name) == 0){
-        system("mkdir %s",ref_name);
-        system(" echo %s > %s",ref_name,hash);
+        char command1[100];
+        sprintf(command1,"mkdir %s",ref_name);
+        system(command1);
+        char command2[100];
+        sprintf(command2," echo %s > %s",ref_name,hash);
+        system(command2);
+        free(command1);
+        free(command2);
     }
-    system(" echo %s > %s",ref_name,hash);
+    char command3[100];
+    sprintf(command3,"echo %s > %s",ref_name,hash);
+    system(command3);
+    free(command3);
+}
 
 void deleteRef(char* ref_name){ //à tester
     if(ref_name == NULL){
@@ -45,7 +55,10 @@ void deleteRef(char* ref_name){ //à tester
         printf("fichier n'existe pas, il n'y a pas à supprimer! \n");
         return ;
     }
-    system("rm .ref/%s",ref_name);
+    char command[100];
+    sprintf(command,"rm .ref/%s",ref_name);
+    system(command);
+    free(command);
     return;
 
 }
@@ -62,7 +75,7 @@ char* getRef(char* ref_name){
         printf("erreur d'ouverture de ficher \n");
         return;
     }
-    char[100] ligne;
+    char ligne[100];
     fgets(ligne,100,f) ;
     fclose (f) ;
 
@@ -70,7 +83,7 @@ char* getRef(char* ref_name){
 }
 
 void createFile(char* file) {
-    char buff [100];
+    char buff[100];
     sprintf(buff,"touch %s",file);
     system(buff);
 }
@@ -97,7 +110,7 @@ void myGitCommit(char* branch_name, char* message){
         return;
     }
     //comparer si head et branch name pointent vers la memem chose 
-    char[256] ch;
+    char ch[256];
     sprintf(ch,".refs/%s",branch_name);
     if(file_exists(ch) == 0){
         printf("la branch n'existe pas \n");

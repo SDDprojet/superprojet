@@ -61,7 +61,7 @@ void blobFile(char* file);
 
 void blobFile2(char* file);
 
-int size_list(List* l);
+int size_list(List l);
 // envoyer la taille de la liste 
 
 #endif

@@ -192,14 +192,15 @@ void blobFile2(char* file){
     char* ch=hashToPath(hash);
     cp(ch,file);
  }
- int size_list(List* l){
-    if(l == NULL){
+
+int size_list(List l) {
+    if (l == NULL) {
         return 0;
     }
     int cpt = 0;
-    while(l != NULL){
+    while (l != NULL) {
         cpt++;
-        l = l-> next;
+        l = l->next;
     }
     return cpt;
- }
+}
