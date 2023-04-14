@@ -51,17 +51,16 @@ int main(){
     //List* l2 = ftol("test_ltof.txt");
     //printf("%s\n",ltos(l));
     //printf("ici c'est l2 %s\n",ltos(l));
-
 	//printf("%s\n",ctos(listGet(l,1)));
-    //List* m = listdir(".");
-    //printf("%s\n",ltos(m)); 
+    //List* m1 = listdir(".");
+    //printf("%s\n",ltos(m1)); 
 	//printf("%s\n",searchList(l,"ahh"));
 
 
     printf("--------------------------------------------\n");
     List* m = listdir(".");
     printf("%s\n",ltos(m)); 
-    printf("%d \n",file_exists("exo2.c"));
+    //printf("%d \n",file_exists("exo2.c"));
 
     printf("\n");
     printf("\n");
@@ -81,11 +80,16 @@ int main(){
 
     printf("ftc de test_ctf = %s",cts(ftc("test_ctf2"))); 
 
-    char* ss = cts(c);
+    //char* ss = cts(c);
     //printf("stc = %s\n",stc(ss));
     //stc(ss)
 
     printf("-------------------Exercice 7-----------------\n");
+    initRefs();
+    createUpdateRef("master","123456");
+    createUpdateRef("massyl","est-ce que tu sais que je taime");
+    printf("%s \n",listdir(".refs"));
+    deleteRef("master");
     
 
 	return 0; 
