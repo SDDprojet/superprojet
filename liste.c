@@ -13,15 +13,25 @@ List* initList(){
 
 Cell* buildCell(char* ch){
     Cell* c = (Cell*)(malloc(sizeof(Cell)));
+    if(c==NULL){
+        printf("Erreur d'allocation mémoire");
+        return NULL;
+    }
     c->data = strdup(ch);
+    if(c->data==NULL){
+        printf("Erreur d'allocation mémoire");
+        return NULL;
+    }
     c->next = NULL;
 
     return c;
 }
 void freeCell(Cell* c){
     while(c != NULL){
+        Cell* next=c->next;
         free(c->data);
-        c = c->next;
+        free(c);
+        c = next;
     }
 }
 void insertFirst(List *L,Cell* C){
@@ -37,6 +47,11 @@ char* ctos(Cell* c){
 
 char* ltos(List* L){
     char * res = malloc(1000);
+    if(res==NULL){
+        printf("Erreur d'allocation mémoire");
+        return NULL;
+    }
+    res[0]='\0'
     Cell * tmp = *L;
     while(tmp){
         strcat(res, ctos(tmp));
@@ -45,7 +60,7 @@ char* ltos(List* L){
     }
     return res;
 }
-Cell* listGet(List* l, int i){
+Cell* listGet2(List* l, int i){
 	while(*l){
 		if(i==1){
 			return *l;
@@ -54,6 +69,20 @@ Cell* listGet(List* l, int i){
 		i--;
 	}
 	return NULL;
+}
+Cell* listGet(List* l, int i){
+    int index = 1; 
+    Cell* tmp = *l;
+    
+    while(tmp){
+        if(index == i){
+            return tmp;
+        }
+        tmp = tmp->next;
+        index++;
+    }
+    
+    return NULL;
 }
 
 
@@ -73,22 +102,22 @@ List* listdir(char* root_dir){
     DIR* dp = opendir(root_dir) ;
     List* L = initList();
     struct dirent *ep ;
-    if(dp != NULL)
-    {
-        while ((ep = readdir(dp)) != NULL)
-        {   Cell* c1 = buildCell(ep->d_name);
+    if(dp != NULL){
+        while ((ep = readdir(dp)) != NULL){   
+            Cell* c1 = buildCell(ep->d_name);
             insertFirst(L,c1);
         }
+        closedir(dp);
     }
     return L;
 }
 
 void insertLast(List *L, Cell *C){
-    List l = (*L);
     if (*L == NULL){
         *L = C;
         return;
     }
+    List l = (*L);
     while(l->next){
         l=l->next;
     } 
@@ -122,6 +151,10 @@ List* stol(char* s){
 
 void ltof(List* L, char* path){
     FILE * f = fopen(path, "w");
+    if(f==NULL){
+        printf("Erreur d'ouverture du fichier %s\n",path);
+        return;
+    }
     char * chaine = ltos(L);
     fprintf(f, "%s\n",chaine);
     fclose(f);
@@ -129,14 +162,31 @@ void ltof(List* L, char* path){
 
 List* ftol(char* path){
     FILE * f = fopen(path, "r");
+    if(f==NULL){
+        printf("Erreur d'ouverture du fichier %s\n",path);
+        return NULL;
+    }
     char buffer[256];
     fgets(buffer,256, f);
     List * L = stol(buffer);
+    fclose(f);
     return L;   
+}
+void freeList(List* L){
+    Cell* current = *L;
+    Cell* next;
+    while (current != NULL){
+        next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+    *L = NULL; 
 }
 int file_exists(char *file){
     List* l = listdir(".");
     Cell* c = searchList(l,file);
+    freeList(&l);
     if(c == NULL){
         return 0;
     }
@@ -148,7 +198,16 @@ void cp(char *to, char *from){
         return ;
     }
     FILE * source = fopen(from, "r");
+    if(source ==NULL){
+        printf("Erreur d'ouverture du fichier %s\n",from);
+        return;
+    }
     FILE * dest = fopen(to, "w");
+    if(dest ==NULL){
+        printf("Erreur d'ouverture du fichier %s\n",to);
+        fclose(source);
+        return;
+    }
     char buffer[256];
     while(fgets(buffer,256,source)!=NULL){
         fprintf(dest,"%s",buffer);
@@ -158,9 +217,19 @@ void cp(char *to, char *from){
 
 }
 
-char* hashToPath(char* hash){
+char* hashToPath2(char* hash){
     char* res = malloc(strlen(hash)+1);
     strcpy(res,hash);
+    sprintf(res, "%c%c/%s", hash[0],hash[1],hash+2);
+    return res;
+}
+char* hashToPath(char* hash){
+    char* res = malloc(strlen(hash)+3);
+    if(res == NULL){
+        printf("Erreur d'allocation de mémoire\n");
+        return NULL;
+    }
+    
     sprintf(res, "%c%c/%s", hash[0],hash[1],hash+2);
     return res;
 }
@@ -173,7 +242,7 @@ void blobFile(char* file){
     char* hash = sha256file(file);
     char* chemin = hashToPath(hash);
     char command1[500];
-    sprintf(command1, "mkdir %c%c",chemin[0],chemin[1]);
+    sprintf(command1, "mkdir -p %c%c",chemin[0],chemin[1]);//jai ajouter -p pour eviter les erreurs si le repertoire existe deja 
     system(command1);
     cp(chemin,file);
 }
@@ -194,9 +263,6 @@ void blobFile2(char* file){
  }
 
 int size_list(List l) {
-    if (l == NULL) {
-        return 0;
-    }
     int cpt = 0;
     while (l != NULL) {
         cpt++;
