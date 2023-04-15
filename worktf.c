@@ -278,3 +278,17 @@ void restoreWorkTree(WorkTree* wt, char* path){
 	}
 }
 
+int isWorkTree(WorkTree* wt){
+    if(wt->tab == NULL || wt->size ==0){
+        return 0;
+    }
+    for (int i = 0; i < wt->n; i++) {
+        WorkFile* wf = &(wt->tab[i]);
+        if (wf == NULL || wf->name == NULL || wf->hash == NULL || wf->mode < 0) {
+            return 0;
+        }
+    }
+    return 1;
+
+}
+

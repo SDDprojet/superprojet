@@ -93,7 +93,7 @@ int main(){
     printf("%d\n",file_exists2(".refs/master"));
     deleteRef("master");
     printf("ref de HEAD = %s \n",getRef("HEAD"));
-    
+    createFile("boobies");
 
 	return 0; 
 }

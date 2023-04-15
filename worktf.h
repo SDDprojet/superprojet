@@ -50,4 +50,6 @@ char* saveWorkTree(WorkTree* wt, char* path);
 
 int isFile(const char* name);
 
+int isWorkTree(WorkTree* wt);
+
 #endif 

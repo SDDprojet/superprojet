@@ -95,17 +95,17 @@ void createFile(char* file) {
     system(buff);
 }
  
-void myGitAdd ( char * file_or_folder ){
+void myGitAdd ( char* file_or_folder ){
     WorkTree * wt ;
-    if (file_exists(".add")== 0 ){
-        createFile ( ".add") ;
+    if (file_exists2(".add")== 0 ){
+        createFile (".add") ;
         wt = initWorkTree () ;
     }else{
-        wt = ftwt (". add") ;
+        wt = ftwt (".add") ;
     }
-    if(file_exists(file_or_folder) == 1){
-        appendWorkTree ( wt , file_or_folder , 0 , NULL ) ;
-        wttf ( wt ,". add") ;
+    if(file_exists2(file_or_folder) == 1){
+        appendWorkTree(wt,file_or_folder,0,NULL) ;
+        wttf(wt,". add") ;
     }else{
         printf("fichier/repertpoire %s n'existe pas \n",file_or_folder);
     }
