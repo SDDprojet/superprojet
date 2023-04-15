@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
+
 #define SIZE 20
 
 void initRefs(){ // déjà tester 
@@ -44,13 +45,13 @@ void createUpdateRef(char* ref_name, char* hash){ //déjà tester
     system(command3);
 }
 
-void deleteRef(char* ref_name){ //me marhce pas
+void deleteRef(char* ref_name){ //déjà tester
     if(ref_name == NULL){
         return ;
     }
     char path[100];
     sprintf(path,".refs/%s",ref_name);
-    if(file_exists(path) == 0){
+    if(file_exists2(path) == 0){
         printf("fichier n'existe pas, il n'y a pas à supprimer! \n");
         return ;
     }
@@ -60,24 +61,32 @@ void deleteRef(char* ref_name){ //me marhce pas
     return;
 
 }
-char* getRef(char* ref_name){
+char* getRef(char* ref_name){ //marhce
     if(ref_name == NULL){
         return ;
     }
-    if(file_exists(ref_name) == 0){
+    char path[100];
+    sprintf(path,".refs/%s",ref_name);
+    if(file_exists2(path) == 0){
         printf("fichier n'existe pas \n");
         return ;
     }
-    FILE* f = fopen(ref_name,"r");
+    FILE* f = fopen(path,"r");
     if(f == NULL){
         printf("erreur d'ouverture de ficher \n");
         return;
     }
     char ligne[256];
-    fgets(ligne,256,f) ;
-    fclose (f) ;
+    fgets(ligne,256,f);
+    fclose(f);
+    int len = strlen(ligne);
+    if (len > 0 && ligne[len-1] == '\n') {
+        ligne[len-1] = '\0';
+    }
+    char* ref = malloc(strlen(ligne)+1);
+    strcpy(ref, ligne);
+    return ref;
 
-    return ligne;
 }
 
 void createFile(char* file) {
