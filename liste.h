@@ -45,6 +45,8 @@ void freeList(List* l);
 int file_exists(char *file);
 //indique si file existe retourne 1, 0 sinon 
 
+_Bool file_exists2(char *file);
+
 List* stol(char* s);
 // transforme une chaine de caracteres representant une liste en une liste chainee
 

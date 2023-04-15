@@ -48,13 +48,13 @@ int main(){
     printf("blobWorkTree(watermelon) = %s \n ",blobWorkTree2(watermelon));
     
 
-    //List* l2 = ftol("test_ltof.txt");
-    //printf("%s\n",ltos(l));
-    //printf("ici c'est l2 %s\n",ltos(l));
-	//printf("%s\n",ctos(listGet(l,1)));
-    //List* m1 = listdir(".");
-    //printf("%s\n",ltos(m1)); 
-	//printf("%s\n",searchList(l,"ahh"));
+    List* l2 = ftol("test_ltof.txt");
+    printf("%s\n",ltos(l));
+    printf("ici c'est l2 %s\n",ltos(l));
+	printf("%s\n",ctos(listGet(l,1)));
+    List* m1 = listdir(".");
+    printf("%s\n",ltos(m1)); 
+	printf("%s\n",searchList(l,"ahh"));
 
 
     printf("--------------------------------------------\n");
@@ -87,9 +87,12 @@ int main(){
     printf("-------------------Exercice 7-----------------\n");
     initRefs();
     createUpdateRef("master","123456");
+    createUpdateRef("HEAD","123456");
     createUpdateRef("massyl","est-ce que tu sais que je taime");
-    printf("%s \n",listdir(".refs"));
+    printf("%s \n",ltos(listdir(".refs")));
+    printf("%d\n",file_exists2(".refs/master"));
     deleteRef("master");
+    printf("ref de HEAD = %s \n",getRef("HEAD"));
     
 
 	return 0; 

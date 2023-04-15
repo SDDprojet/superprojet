@@ -241,7 +241,7 @@ char* saveWorkTree(WorkTree* wt, char* path){
 }
 
 
-int isFile(const char* name){
+int isFile2(const char* name){
     DIR* directory = opendir(name);
 
     if(directory != NULL){

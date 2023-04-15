@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <sys/stat.h>
+#include <stdbool.h>
 
 List* initList(){
     List* l=(List*)(malloc(sizeof(List)));
@@ -192,6 +194,13 @@ int file_exists(char *file){
     }
     return 1;
 }
+
+struct stat st = {0};
+
+_Bool file_exists2( char * file ) {
+    struct stat buffer ;
+    return (stat(file,&buffer) == 0);
+}
 void cp(char *to, char *from){
     if(file_exists(to)==0){
         printf("le fichier %s n'existe pas cp\n",to );
@@ -272,7 +281,7 @@ int size_list(List l) {
     return cpt;
 }
 
-int main() {
+/*int main() {
     List* L = initList();
     Cell* C1 = buildCell("Hello");
     Cell* C2 = buildCell("World");
@@ -294,4 +303,4 @@ int main() {
     freeList(L2);
 
     return 0;
-}
+} */
