@@ -222,6 +222,7 @@ void freeList(List* L){
     }
     *L = NULL; 
 }
+struct stat st = {0};
 int file_exists (char *file){ 
     struct stat buffer;
     return (stat(file, &buffer) == 0);
@@ -574,6 +575,32 @@ int isFile2(const char* name){
 
     return -1;//si le fichier ou le directory n'existe pas
 }
+int isWorkTree(char* hash) {
+    char* path = hashToPath(hash);
+    if (file_exists(path)) {
+        // If the file exists, check if it is a directory or not
+        struct stat buffer;
+        if (stat(path, &buffer) == 0) {
+            if (S_ISDIR(buffer.st_mode)) {
+                // If it is a directory, return 1 to indicate that it is a work tree
+                free(path);
+                return 1;
+            } else {
+                // If it is a regular file, return 0 to indicate that it is not a work tree
+                free(path);
+                return 0;
+            }
+        } else {
+            // If there was an error in stat(), return -1 to indicate failure
+            free(path);
+            return -1;
+        }
+    } else {
+        // If the file does not exist, return -1 to indicate failure
+        free(path);
+        return -1;
+    }
+}
 
 
 void restoreWorkTree(WorkTree* wt, char* path){
@@ -589,7 +616,7 @@ void restoreWorkTree(WorkTree* wt, char* path){
 		char* absPath= concat_paths(path,wt->tab[i].name);
         char* copyPath=hashToPath(wt->tab[i].hash);
         char* hash=wt->tab[i].hash;
-        int status_Wt= isWortkTree(wt->tab[i].hash);
+        int status_Wt= isWorkTree(wt->tab[i].hash);
         if(status_Wt==-1){
             printf("Le fichier %s n'existe pas à l'endroit indiqué (peut-être une erreur du paramètre path ?) -> restoreWorkTree\n",absPath);
             exit(EXIT_FAILURE);
@@ -614,40 +641,27 @@ void restoreWorkTree(WorkTree* wt, char* path){
 }
 
 
-int main() {
-    // Utilisation des fonctions
-
+int main(){
+    // Création d'un WorkTree
     WorkTree* wt = initWorkTree();
-    appendWorkTree(wt, "file1.txt", "hash1", 0644);
-    appendWorkTree(wt, "file2.txt", "hash2", 0755);
-    appendWorkTree(wt, "dir1", "hash3", 0755);
-    appendWorkTree(wt, "dir2", "hash4", 0755);
+    appendWorkTree(wt, "fichier1", "hash1", 777);
+    appendWorkTree(wt, "dossier1", "hash2", 777);
+    appendWorkTree(wt, "fichier2", "hash3", 777);
 
-    printf("WorkTree initial :\n");
-    /*for (int i = 0; i < wt->size; i++) {
-        printf("File name: %s\n", wt->tab[i].name);
-        printf("File hash: %s\n", wt->tab[i].hash);
-        printf("File mode: %o\n", wt->tab[i].mode);
-        printf("--------\n");
-    }*/
+    // Appel à saveWorkTree pour sauvegarder le WorkTree
+    char* path = ".";
+    char* blob = saveWorkTree(wt, path);
+    printf("WorkTree sauvegardé dans le blob : %s\n", blob);
 
-    printf("\nSaving WorkTree to file...\n");
-    wttf(wt, "worktree.txt");
+    // Appel à restoreWorkTree pour restaurer le WorkTree
+    WorkTree* wt_restored = initWorkTree();
+    restoreWorkTree(wt_restored, path);
+    printf("WorkTree restauré :\n");
 
-    printf("Loading WorkTree from file...\n");
-    WorkTree* wt2 = ftwt("worktree.txt");
-
-    printf("WorkTree loaded from file :\n");
-    /*for (int i = 0; i < wt2->size; i++) {
-        printf("File name: %s\n", wt2->tab[i].name);
-        printf("File hash: %s\n", wt2->tab[i].hash);
-        printf("File mode: %o\n", wt2->tab[i].mode);
-        printf("--------\n");
-    }*/
-
-    printf("\nFreeing memory...\n");
+    // Libération de la mémoire
+    free(blob);
     freeWorkTree(wt);
-    freeWorkTree(wt2);
+    freeWorkTree(wt_restored);
 
     return 0;
 }
