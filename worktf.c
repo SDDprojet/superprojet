@@ -72,6 +72,65 @@ WorkFile* stwf(char* ch) {
     return wf;
 }
 
+WorkTree* stwt(char* ch){
+
+	char name[255];
+	char hash[255];
+	char mode[255];
+
+	char* begin = ch;
+	char* end = strchr(ch,'\n');
+	int i;
+	i = sscanf(begin,"%s\t%s\t%s",name, hash, mode);
+	if((end == NULL) && (i != 3)){
+		return NULL;	
+	} 
+
+	WorkTree* wt = initWorkTree();
+
+	char* content = (char*)malloc(sizeof(char)*TAILLE_MAX_DATA);
+	int size_content;
+
+	while(end != NULL){
+		size_content = end - begin;
+		content = strncpy(content,begin,size_content);
+
+		
+		content[size_content+1] = '\0';
+		i = sscanf(content,"%s\t%s\t%s",name, hash, mode);
+
+
+		if(i == 3){
+			appendWorkTree(wt,name, hash, atoi(mode));
+
+		}
+		begin = end+1;
+
+
+		while(begin[0]=='\n'){
+			begin ++;
+		}
+		end = strchr(begin,'\n');
+	}
+
+
+
+
+	content = strcpy(content,begin);
+
+
+	i = sscanf(content,"%s\t%s\t%s",name, hash, mode);
+
+
+	if(i == 3){
+		appendWorkTree(wt,name, hash, atoi(mode));
+
+	}
+
+	return wt;
+
+}
+
 WorkTree* initWorkTree(){
     WorkTree* wt = (WorkTree*)malloc(sizeof(WorkTree));
     wt->tab = (WorkFile*)malloc(SIZE*sizeof(WorkFile));

@@ -322,8 +322,8 @@ int getChmod(const char * path) {
     if (stat(path,&ret) == -1){
         return -1;
     }   
-    return (ret.st_mode & S_IRUSR) | (ret.st_mode & S_IWUSR) |(ret.st_mode & S_IXUSR ) | /*owner*/
-        (ret.st_mode & S_IRGRP) |(ret.st_mode & S_IWGRP) |(ret.st_mode & S_IXGRP ) | /*group*/
+    return (ret.st_mode & S_IRUSR) | (ret.st_mode & S_IWUSR) |(ret.st_mode & S_IXUSR)| /*owner*/
+        (ret.st_mode & S_IRGRP) |(ret.st_mode & S_IWGRP) |(ret.st_mode & S_IXGRP)| /*group*/
         (ret.st_mode & S_IROTH) |(ret.st_mode & S_IWOTH) | (ret.st_mode & S_IXOTH ); /*other*/
 }
 
@@ -356,7 +356,7 @@ char* wfts(WorkFile* wf) {
         printf("Erreur d'allocation mémoire\n");
         return NULL;
     }
-    sprintf( ch , "%s \t %s \t %d" , wf->name , wf->hash , wf->mode ) ;
+    sprintf( ch , "%s \t %s \t %d" , wf->name , wf->hash , wf->mode);
     return ch ;
 }
 
@@ -468,14 +468,14 @@ WorkTree* ftwt(char* file){
 	fclose(f);
 	return wt;
 }
-char* hashToFile (char* hash ) {
+char* hashToFile (char* hash){
  char* ch2 = strdup(hash) ;
  struct stat st;
  ch2[2] = '\0' ;
  if(stat(ch2,&st) == -1) {
- mkdir (ch2) ;
+ mkdir(ch2,0700) ;
  }
- return hashToPath ( hash ) ;
+ return hashToPath(hash);
  }
 
 
@@ -504,12 +504,19 @@ char* concat_paths(char* c1, char* c2){
 }
 
 
-int isFile(const char *path){
-    struct stat path_stat;
-    if (file_exists((char*)path) == 1){
-        stat(path,&path_stat); 
-        return S_ISREG(path_stat.st_mode);   //1 si file 0 si pas file ou n'existe pas
+int isFile(const char* name)
+{
+    DIR* directory = opendir(name);
+
+    if(directory != NULL){
+     closedir(directory);
+     return 0;
     }
+
+    if(errno == ENOTDIR){
+     return 1;
+    }
+
     return -1;
 }
 
@@ -526,6 +533,7 @@ char * saveWorkTree(WorkTree *wt,char * path){ //La fonction sauvegarde les fich
     char * absPath;
     for(int i=0;i<wt->n;i++){ //Parcours des WorkFile présents
         //On récupère le path du WorkFile correspondant
+        printf("i = %d \n ",i);
         absPath = concat_paths(path,wt->tab[i].name);
         //On stocke le statut du fichier pour faire nos cas
         int etat_file = isFile(absPath);
@@ -561,6 +569,64 @@ char * saveWorkTree(WorkTree *wt,char * path){ //La fonction sauvegarde les fich
     return blobWorkTree(wt);
 }
 
+WorkTree* stwt(char* ch){
+
+	char name[255];
+	char hash[255];
+	char mode[255];
+
+	char* begin = ch;
+	char* end = strchr(ch,'\n');
+	int i;
+	i = sscanf(begin,"%s\t%s\t%s",name, hash, mode);
+	if((end == NULL) && (i != 3)){
+		return NULL;	
+	} 
+
+	WorkTree* wt = initWorkTree();
+
+	char* content = (char*)malloc(sizeof(char)*256);
+	int size_content;
+
+	while(end != NULL){
+		size_content = end - begin;
+		content = strncpy(content,begin,size_content);
+
+		
+		content[size_content+1] = '\0';
+		i = sscanf(content,"%s\t%s\t%s",name, hash, mode);
+
+
+		if(i == 3){
+			appendWorkTree(wt,name, hash, atoi(mode));
+
+		}
+		begin = end+1;
+
+
+		while(begin[0]=='\n'){
+			begin ++;
+		}
+		end = strchr(begin,'\n');
+	}
+
+
+
+
+	content = strcpy(content,begin);
+
+
+	i = sscanf(content,"%s\t%s\t%s",name, hash, mode);
+
+
+	if(i == 3){
+		appendWorkTree(wt,name, hash, atoi(mode));
+
+	}
+
+	return wt;
+
+}
 
 int isFile2(const char* name){
     DIR* directory = opendir(name);
@@ -575,33 +641,15 @@ int isFile2(const char* name){
 
     return -1;//si le fichier ou le directory n'existe pas
 }
-int isWorkTree(char* hash) {
-    char* path = hashToPath(hash);
-    if (file_exists(path)) {
-        // If the file exists, check if it is a directory or not
-        struct stat buffer;
-        if (stat(path, &buffer) == 0) {
-            if (S_ISDIR(buffer.st_mode)) {
-                // If it is a directory, return 1 to indicate that it is a work tree
-                free(path);
-                return 1;
-            } else {
-                // If it is a regular file, return 0 to indicate that it is not a work tree
-                free(path);
-                return 0;
-            }
-        } else {
-            // If there was an error in stat(), return -1 to indicate failure
-            free(path);
-            return -1;
-        }
-    } else {
-        // If the file does not exist, return -1 to indicate failure
-        free(path);
-        return -1;
+int isWorkTree(char * hash){
+    if(file_exists(strcat(hashToPath(hash), ".t"))){
+       return 1;
     }
-}
-
+    if(file_exists(hashToPath(hash))){
+       return 0;
+    }
+    return -1;
+ }
 
 void restoreWorkTree(WorkTree* wt, char* path){
 	if(wt == NULL ){
@@ -623,7 +671,7 @@ void restoreWorkTree(WorkTree* wt, char* path){
         }
         if(status_Wt==0){
             cp(absPath,copyPath);
-            setmode(wt->tab[i].mode,absPath);
+            setMode(wt->tab[i].mode,absPath);
         }
         if(status_Wt==1){
             copyPath=realloc(copyPath,strlen(copyPath)+3);
@@ -653,15 +701,16 @@ int main(){
     char* blob = saveWorkTree(wt, path);
     printf("WorkTree sauvegardé dans le blob : %s\n", blob);
 
-    // Appel à restoreWorkTree pour restaurer le WorkTree
+    //Appel à restoreWorkTree pour restaurer le WorkTree
     WorkTree* wt_restored = initWorkTree();
     restoreWorkTree(wt_restored, path);
     printf("WorkTree restauré :\n");
 
-    // Libération de la mémoire
+    //Libération de la mémoire
     free(blob);
     freeWorkTree(wt);
     freeWorkTree(wt_restored);
+
 
     return 0;
 }
