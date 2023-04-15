@@ -272,7 +272,7 @@ int size_list(List l) {
     return cpt;
 }
 
-int main() {
+/*int main() {
     List* L = initList();
     Cell* C1 = buildCell("Hello");
     Cell* C2 = buildCell("World");
@@ -294,4 +294,4 @@ int main() {
     freeList(L2);
 
     return 0;
-}
+} */

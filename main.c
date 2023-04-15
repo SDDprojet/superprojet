@@ -48,13 +48,13 @@ int main(){
     printf("blobWorkTree(watermelon) = %s \n ",blobWorkTree2(watermelon));
     
 
-    //List* l2 = ftol("test_ltof.txt");
-    //printf("%s\n",ltos(l));
-    //printf("ici c'est l2 %s\n",ltos(l));
-	//printf("%s\n",ctos(listGet(l,1)));
-    //List* m1 = listdir(".");
-    //printf("%s\n",ltos(m1)); 
-	//printf("%s\n",searchList(l,"ahh"));
+    List* l2 = ftol("test_ltof.txt");
+    printf("%s\n",ltos(l));
+    printf("ici c'est l2 %s\n",ltos(l));
+	printf("%s\n",ctos(listGet(l,1)));
+    List* m1 = listdir(".");
+    printf("%s\n",ltos(m1)); 
+	printf("%s\n",searchList(l,"ahh"));
 
 
     printf("--------------------------------------------\n");
