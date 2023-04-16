@@ -8,28 +8,31 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-int hashFile(char* source, char* dest){
-    char buffer[256];
-    sprintf(buffer,"cat %s | sha256sum >>%s",source,dest);
-    system(buffer) ;
-    return 0;
+int hashFile (char* source, char* dest) {
+
+    char cmd[256] = "\0";
+    sprintf(cmd, "sha256sum \"%s\" > \"%s\"", source, dest);
+    return system(cmd);
 }
+
 char* sha256file(char* file){
-    static char template[] ="/tmp/myfileXXXXXX" ;
-    char fname[1000];
-    char line[256];
+    static char template[] = "/tmp/myfileXXXXXX";
+    char fname[100];
     strcpy(fname,template);
-    int fd=mkstemp(fname) ;
-    hashFile(file,fname);
-    char* buffer;
-    buffer=malloc(sizeof(char)*256);
+    mkstemp(fname);
+    char command1[200];
+    sprintf(command1, "cat %s | sha256sum > %s",file,fname);
+    system(command1);
     FILE* f = fopen(fname,"r");
-    fgets(line,256,f); 
-    sscanf(line,"%s",buffer);
+    if (f==NULL) {
+        printf("Erreur ouverture\n");
+        exit(EXIT_FAILURE);
+    }
+    char* hash = (char*)malloc(1000*sizeof(char));
+    fscanf(f,"%s",hash);
     fclose(f);
-    
-
-    return buffer;
-    
-
+    char command2[150];
+    sprintf(command2, "rm %s",fname);
+    system(command2);
+    return hash;
 }

@@ -18,13 +18,30 @@ kvp* createKeyVal(char* key,char* val){ //deja testé
     kvp* k = malloc(sizeof(kvp));
     k->key = strdup(key);
     k->value = strdup(val);
+    if(k==NULL){
+        printf("Erreur d'allocation mémoire");
+        return NULL;
+    }
+    if(k->key==NULL){
+        printf("Erreur d'allocation mémoire");
+        free(k);
+        return NULL;
+    }
+    if(k->value==NULL){
+        printf("Erreur d'allocation mémoire");
+        free(k->key);
+        free(k);
+        return NULL;
+    }
     return k ;
 }
 
 void freeKeyVal(kvp* kv){
-    free(kv->key);
-    free(kv->value);
-    free(kv);
+    if(kv != NULL){
+        free(kv->key);
+        free(kv->value);
+        free(kv);
+    }
 }
 
 char* kvts(kvp* k){ //deja testé
@@ -34,6 +51,10 @@ char* kvts(kvp* k){ //deja testé
 	char *chaine = (char *)malloc(sizeof(char)*255);
 	snprintf(chaine,255,"%s :%s",k->key,k->value);
 	return chaine;
+    if(chaine==NULL){
+         printf("Erreur d'allocation mémoire : kvts");
+         return NULL;
+   }
 }
 
 kvp* stkv(char* s){ //deja testé
@@ -61,8 +82,17 @@ kvp* stkv(char* s){ //deja testé
 
 Commit* initCommit(){ //deja testé
     Commit* c = malloc(sizeof(Commit));
+    if(c==NULL){
+         printf("Erreur d'allocation mémoire");
+         return NULL;
+    }
     c->size = SIZE;
     c->T = malloc(SIZE*sizeof(kvp*));
+    if(c->T==NULL){
+         printf("Erreur d'allocation mémoire");
+         free(c);
+         return NULL;
+    }
     for(int i = 0; i< SIZE ; i++ ){
         c->T[i] = NULL;
     }
@@ -85,20 +115,33 @@ unsigned long hash(unsigned char *str){ //deja testé
 
 
 void commitSet(Commit* c,char* key, char* value){     //deja testé
+    if(key==NULL || value == NULL){
+         printf("Erreur : commitSet");
+         return;
+    }
     unsigned long p = hash(key)%c->size ;
     while(c->T[p] != NULL ) {
         p =(p +1)%c-> size ; //probing lineaire
     }
+    
     c->T[p] =createKeyVal(key,value);
     c->n++;
 }
 Commit* createCommit(char* hash){ //deja testé
+    if(hash==NULL){
+         printf("Erreur : createCommit");
+         return NULL;
+   }
     Commit* c =initCommit();
     commitSet(c,"tree",hash);
     return c;
 }
 
 char* commitGet(Commit* c,char* key){ //deja testé
+    if(c==NULL || key==NULL){
+            printf("Erreur : commitGet");
+            return NULL;
+    }
     int i = 0;
     int p = hash(key)%c->size;
     while(c->T[p] != NULL && i < c->size){
@@ -111,18 +154,29 @@ char* commitGet(Commit* c,char* key){ //deja testé
     return NULL;
 }
 
-char* cts2(Commit* c){ //deja testé
-    int i =0;
-    char* chaine = malloc(sizeof(char)*100*c->n ) ;
-    while(i < c->size){
-        if(c->T[i] != NULL){
-            printf("i = %d et c->n = %d \n",i,c->n);
-            strcat(chaine,kvts(c->T[i]));
-            strcat(chaine,"\n");
-        }
-        i++;
+char* commitPath(const char* hash){
+
+    if(hash == NULL){
+      return NULL;
     }
-    return chaine ;
+
+    char *hash_path = hashToPath(hash);
+
+    if(hash_path == NULL){
+      return NULL;
+    }
+    char *path = malloc(sizeof(char) * 256);
+    memset(path, 0, 256); 
+
+    strcat(path, ".tmp");
+    strcat(path, "/");
+    strcat(path, hash_path);
+    strcat(path, ".c");
+
+  free(hash_path);
+
+  return path;
+
 }
 char *cts(Commit *c) { //déjà tester
     int i = 0;
@@ -144,6 +198,7 @@ char *cts(Commit *c) { //déjà tester
                 printf("Erreur: dépassement de tampon\n");
                 break;
             }
+            free(temp);
         }
         i++;
     }
@@ -152,21 +207,20 @@ char *cts(Commit *c) { //déjà tester
 
 
 Commit *stc(char *s){ //déjà tester 
-  Commit *c = initCommit();
+    Commit *c = initCommit();   
+    char *token = strtok(s, "\n");
 
-  char *token = strtok(s, "\n");
-
-  while(token){
-    kvp* pair = stkv(token);
+    while(token){
+        kvp* pair = stkv(token);
 
     commitSet(c, pair->key, pair->value);
     freeKeyVal(pair);
     token = strtok(NULL, "\n");
-  }
-
-
-  return c;  
+    }
+    free(token);
+    return c;  
 }
+
 void ctf(Commit* c, char* file){ //dejà testé 
     FILE* dest = fopen(file,"w");
     if(dest == NULL){
@@ -178,8 +232,9 @@ void ctf(Commit* c, char* file){ //dejà testé
         if(c->T[i] != NULL){
             kvp* chaine = c->T[i];
             fprintf(dest,"%s\n", kvts(chaine));
+            free(chaine->key);
+            free(chaine->value);
             free(chaine);
-            
         }
         i++;
     }
@@ -190,12 +245,17 @@ Commit *ftc(const char *file){ //déjà tester
   FILE *f = fopen(file, "r");
 
   if(f == NULL){
+    printf("Problème d'ouverture fichier \n");
     return NULL;
   }
 
   size_t size = sizeof(char) * 256;
   char *s = malloc(size);
-
+  if(s==NULL){
+        printf("Erreur d'allocation de mémoire\n");
+        fclose(f);
+        return NULL;
+  }
   memset(s, 0, size);
 
   char buf[256];
@@ -207,17 +267,24 @@ Commit *ftc(const char *file){ //déjà tester
   }
 
   Commit *c = stc(s);
+  fclose(f);
   free(s);
   return c;
 }
 
-char * blobCommit ( Commit * c ) {
-    char fname[100] = "/tmp/myfileXXXXXX" ;
-    int fd =mkstemp(fname);
-    ctf(c,fname);
-    char *hash = sha256file(fname) ;
-    char *ch = hashToFile(hash) ;
-    strcat(ch,".c");
-    cp(ch,fname);
-    return hash ;
+char *blobCommit(Commit *c)
+{
+  char fname[256] = "myCommitXXXXXX";
+  mkstemp(fname);
+
+  ctf(c, fname);
+
+  char *hash = sha256file(fname);
+  char *full_path = commitPath(hash);
+    
+
+  cp(full_path, fname);
+
+  remove(fname);
+  return hash;
 }

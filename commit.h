@@ -22,6 +22,8 @@ char* kvts(kvp* k);
 
 kvp* stkv(char* s);
 
+char* commitPath(const char* hash); 
+
 Commit* initCommit();
 
 unsigned long hash(unsigned char *str);
@@ -40,5 +42,8 @@ void ctf(Commit* c, char* file);
 Commit *ftc(const char *file);
 
 Commit* stc(char *ch);
+
+char* blobCommit( Commit* c );
+
 
 #endif

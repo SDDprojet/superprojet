@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <stdbool.h>
+#include <errno.h>
 
 List* initList(){
     List* l=(List*)(malloc(sizeof(List)));
@@ -201,29 +202,55 @@ _Bool file_exists2( char * file ) {
     struct stat buffer ;
     return (stat(file,&buffer) == 0);
 }
-void cp(char *to, char *from){
-    if(file_exists(to)==0){
-        printf("le fichier %s n'existe pas cp\n",to );
-        return ;
-    }
-    FILE * source = fopen(from, "r");
-    if(source ==NULL){
-        printf("Erreur d'ouverture du fichier cp %s\n",from);
-        return;
-    }
-    FILE * dest = fopen(to, "w");
-    if(dest ==NULL){
-        printf("Erreur d'ouverture du fichier cp %s\n",to);
-        fclose(source);
-        return;
-    }
-    char buffer[256];
-    while(fgets(buffer,256,source)!=NULL){
-        fprintf(dest,"%s",buffer);
-    }
-    fclose(source);
-    fclose(dest);
+void cp(char *to,char *from)
+{
+    
+    char *curs = strdup(to);
+    char *file = strrchr(curs, '/');
 
+    if(file) file[0] = '\0';
+
+    char *token = strtok(curs, "/");
+
+
+    char current_dir[256] = ".";
+    while(token != NULL){
+        strcat(current_dir, "/");
+        strcat(current_dir, token);
+
+        struct stat sb;
+        if (stat(current_dir, &sb) == 0) { // Un dossier ou un fichier du meme nom existe
+            printf("Le nom '%s' est déjà pris par un fichier ou un dossier. Code : %d", current_dir, errno);
+        
+        } else if (mkdir(current_dir, 0700) != 0) {
+            free(curs);
+            return;
+        }
+
+    token = strtok(NULL, "/");
+    }
+    
+    free(curs);
+
+    FILE *dest = fopen(to, "w");
+
+    if (dest == NULL){
+        return;
+    }
+
+    FILE *source = fopen(from, "r");
+
+    if(source == NULL){
+        fclose(dest);
+        return;
+    }
+
+    char buf[256];
+    while (fgets(buf, 256, source))
+        fputs(buf, dest);
+
+    fclose(dest);
+    fclose(source);
 }
 
 char* hashToPath2(char* hash){
