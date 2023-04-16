@@ -220,7 +220,7 @@ void cp(char *to,char *from)
 
         struct stat sb;
         if (stat(current_dir, &sb) == 0) { // Un dossier ou un fichier du meme nom existe
-            printf("Le nom '%s' est déjà pris par un fichier ou un dossier. Code : %d", current_dir, errno);
+            printf("Le nom '%s' est déjà pris par un fichier ou un dossier. Code : %d \n", current_dir, errno);
         
         } else if (mkdir(current_dir, 0700) != 0) {
             free(curs);
