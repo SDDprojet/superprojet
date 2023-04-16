@@ -17,7 +17,7 @@
 int main(){
     printf("\n");
     printf("\n");
-    printf("--------------------Exercice 1--------------------\n");
+    printf("--------------------Exercice 1, 2 et 3--------------------\n");
     printf("\n");
     printf("\n");
 	List* l = initList();
@@ -99,7 +99,8 @@ int main(){
     char* ss = stc(test2);
     printf("[stc] =\n %s\n",cts(ss));
     
-    printf("hash de blobCommit de commit c_1 vaut = %s",blobCommit(c_1));
+    printf("hash de blobCommit de commit c_1 vaut = %s \n",blobCommit(c));
+    printf("\n");
     printf("\n");
     printf("-------------------Exercice 7-----------------\n");
     printf("\n");

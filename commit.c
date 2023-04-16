@@ -154,30 +154,6 @@ char* commitGet(Commit* c,char* key){ //deja testé
     return NULL;
 }
 
-char* commitPath(const char* hash){
-
-    if(hash == NULL){
-      return NULL;
-    }
-
-    char *hash_path = hashToPath(hash);
-
-    if(hash_path == NULL){
-      return NULL;
-    }
-    char *path = malloc(sizeof(char) * 256);
-    memset(path, 0, 256); 
-
-    strcat(path, ".tmp");
-    strcat(path, "/");
-    strcat(path, hash_path);
-    strcat(path, ".c");
-
-  free(hash_path);
-
-  return path;
-
-}
 char *cts(Commit *c) { //déjà tester
     int i = 0;
     int chaine_len = 0;
@@ -221,24 +197,19 @@ Commit *stc(char *s){ //déjà tester
     return c;  
 }
 
-void ctf(Commit* c, char* file){ //dejà testé 
-    FILE* dest = fopen(file,"w");
-    if(dest == NULL){
-        printf("Problème d'ouverture fichier \n");
-        return ;
-    }
-    int i = 0;
-    while(i<c->size){
-        if(c->T[i] != NULL){
-            kvp* chaine = c->T[i];
-            fprintf(dest,"%s\n", kvts(chaine));
-            free(chaine->key);
-            free(chaine->value);
-            free(chaine);
-        }
-        i++;
-    }
-    fclose(dest);
+
+void ctf(Commit *c, char *file)
+{
+  FILE *f = fopen(file, "w");
+  if(f == NULL){
+    printf("probleme d'ouverture de fichier \n");
+    return;
+  }
+
+  char *s = cts(c);
+  fputs(s, f);
+  free(s);
+  fclose(f);
 }
 
 Commit *ftc(const char *file){ //déjà tester
@@ -274,16 +245,18 @@ Commit *ftc(const char *file){ //déjà tester
 
 char *blobCommit(Commit *c)
 {
-  char fname[256] = "myCommitXXXXXX";
+  static char template[] = "/tmp/myfileXXXXXX";
+  char fname[100];
+  strcpy(fname,template);
   mkstemp(fname);
-
+  
   ctf(c, fname);
 
   char *hash = sha256file(fname);
-  char *full_path = commitPath(hash);
-    
+  char *chemin = hashToPath(hash);
 
-  cp(full_path, fname);
+  strcat(chemin,".c") ;
+  cp(chemin, fname);
 
   remove(fname);
   return hash;

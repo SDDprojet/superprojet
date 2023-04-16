@@ -22,7 +22,7 @@ char* kvts(kvp* k);
 
 kvp* stkv(char* s);
 
-char* commitPath(const char* hash); 
+
 
 Commit* initCommit();
 
