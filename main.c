@@ -103,24 +103,21 @@ int main(){
     printf("\n");
     printf("-------------------Exercice 7-----------------\n");
     printf("\n");
-    //initRefs();
-    //createUpdateRef("master","123456");
-    //createUpdateRef("HEAD","123456");
-    //createUpdateRef("massyl","est-ce que tu sais que je taime");
-    //printf("%s \n",ltos(listdir(".refs")));
-    //printf("%d\n",file_exists2(".refs/master"));
-    //deleteRef("master");
-    //printf("ref de HEAD = %s \n",getRef("HEAD"));
-    //createFile("boobies");
+    initRefs();
+    createUpdateRef("master","123456");
+    createUpdateRef("HEAD","123456");
+    createUpdateRef("massyl","est-ce que tu sais que je taime");
+    printf("%s \n",ltos(listdir(".refs")));
+    printf("%d\n",file_exists2(".refs/master"));
+    deleteRef("master");
+    printf("ref de HEAD = %s \n",getRef("HEAD"));
+    myGitAdd("main.c");
 
     //désallouer
     freeList(l);
     freeList(l3);
     freeList(m);
     freeList(m1);
-    //freeCell(c1);
-    //freeCell(c2);
-    //freeCell(c3);
     freeKeyVal(k);
     free(k2);
     freeWorkTree(watermelon);

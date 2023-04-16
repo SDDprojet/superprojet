@@ -15,7 +15,7 @@
 
 #define SIZE 20
 
-void initRefs(){
+void initRefs(){ //deja tester
     DIR* dir = opendir(".refs");
     if(dir == NULL){
         int ret = system("mkdir .refs");
@@ -40,7 +40,7 @@ void initRefs(){
     closedir(dir);
 }
 
-void createUpdateRef(char* ref_name, char* hash){
+void createUpdateRef(char* ref_name, char* hash){ //deja testé
     if(ref_name == NULL || hash == NULL){
         return;
     }
@@ -67,7 +67,7 @@ void createUpdateRef(char* ref_name, char* hash){
         printf("Erreur lors de l'écriture dans le fichier .refs/%s\n", ref_name);
     }
 }
-void deleteRef(char* ref_name){
+void deleteRef(char* ref_name){ //déjà testé 
     if(ref_name == NULL){
         return;
     }
@@ -85,7 +85,7 @@ void deleteRef(char* ref_name){
         return;
     }
 }
-char* getRef(char* ref_name){
+char* getRef(char* ref_name){ //déjà testé
     if(ref_name == NULL){
         return NULL;
     }
@@ -112,7 +112,7 @@ char* getRef(char* ref_name){
     return ref;
 }
 
-void createFile(char* file) {
+void createFile(char* file) { //déjà testé
     if(file == NULL) {
         printf("Le nom de fichier est NULL!\n");
         return;
@@ -125,7 +125,7 @@ void createFile(char* file) {
 }
  
 void myGitAdd(char* file_or_folder) {
-    WorkTree* wt;
+    WorkTree* wt = NULL;
     if(file_exists2(".add") == 0) {
         createFile(".add");
         wt = initWorkTree();
@@ -133,11 +133,15 @@ void myGitAdd(char* file_or_folder) {
         wt = ftwt(".add");
     }
     if(file_exists2(file_or_folder) == 1) {
-        appendWorkTree(wt, file_or_folder, 0, NULL);
+        char* hash = sha256file(file_or_folder);
+        appendWorkTree(wt, file_or_folder, hash, 0);
         wttf(wt, ".add");
+        free(hash);
     } else {
         printf("Fichier/répertoire %s n'existe pas\n", file_or_folder);
+
     }
+    free(wt);
 }
 
 void myGitCommit(char* branch_name, char* message) {
