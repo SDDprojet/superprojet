@@ -118,7 +118,7 @@ int main(){
     freeList(l3);
     freeList(m);
     freeList(m1);
-    //freeCell(c1);
+    freeCell(c1);
     //freeCell(c2);
     //freeCell(c3);
     freeKeyVal(k);

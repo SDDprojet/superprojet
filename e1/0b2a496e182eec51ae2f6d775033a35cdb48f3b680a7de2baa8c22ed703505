@@ -114,16 +114,16 @@ int main(){
     //createFile("boobies");
 
     //désallouer
-    freeList(l);
-    freeList(l3);
-    freeList(m);
-    freeList(m1);
+    //freeList(l);
+    //freeList(l3);
+    //freeList(m);
+    //freeList(m1);
     //freeCell(c1);
     //freeCell(c2);
     //freeCell(c3);
-    freeKeyVal(k);
-    free(k2);
-    freeWorkTree(watermelon);
+    //freeKeyVal(k);
+    //free(k2);
+    //freeWorkTree(watermelon);
 
 
 

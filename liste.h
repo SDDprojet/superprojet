@@ -61,7 +61,7 @@ void cp(char *to, char *from);
 char* hashToPath(char* hash);
 
 void blobFile(char* file);
-
+char *filePath(const char *hash);
 void blobFile2(char* file);
 
 int size_list(List l);

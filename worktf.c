@@ -220,6 +220,32 @@ char* hashToFile (char* hash ) {
  return hashToPath ( hash ) ;
  }
 
+char* workTreeToPath(const char* hash){
+  if(hash == NULL){
+    printf("hash est null");
+    return NULL;
+  }
+
+  char *hash_path = hashToPath(hash);
+
+  if(hash_path == NULL){
+    printf("hashToPath est NULL", hash);
+    return NULL;
+  }
+
+  char *path = malloc(sizeof(char) * 256);
+  memset(path, 0, 256); 
+
+  strcat(path, ".");
+  strcat(path, "/");
+  strcat(path, hash_path);
+  strcat(path, ".t");
+
+  free(hash_path);
+
+  return path;
+}
+
 
 char* blobWorkTree(WorkTree* wt){
     static char template[] = "/tmp/myfileXXXXXX";
@@ -266,34 +292,34 @@ int isFile(const char* name){
     }
 }
 
-char* saveWorkTree(WorkTree* wt, char* path){
-    int i =0;
-    char*  hash;
-    char* blobHash;
 
-    while(i < wt->size){
-        if(isFile(conct(path,wt->tab[i].name))== 1){
-            blobFile(conct(path,wt->tab[i].name));
-            hash=sha256file(conct(path,wt->tab[i].name));
-            wt->tab[i].hash = strdup(hash);
-            wt->tab[i].mode = getChmod(conct(path,wt->tab[i].name));
-            free(hash);
-        }else{
-            WorkTree* newWT = initWorkTree();
-            List* m = listdir(conct(path,wt->tab[i].name));
-            Cell* ptr = m;
-            while(ptr != NULL){
-                if(strncmp(ptr->data,".",1) != 0){
-					appendWorkTree(newWT,ptr->data,"lalal",0);
-				}
-				ptr=ptr->next;
-            }
-            hash=saveWorkTree(newWT,conct(path,wt->tab[i].name));
-            wt->tab[i].hash =strdup(hash);
-			wt->tab[i].mode = getChmod(conct(path,wt->tab[i].name));
-            free(hash);
+
+char* saveWorkTree(WorkTree* wt, char* path){
+    for (int i = 0; i < wt->n; i++){
+        char *path = malloc(sizeof(char) * (strlen(path) + strlen(wt->tab[i].name) + 2));
+
+        memset(path, 0, sizeof(char) * (strlen(path) + strlen(wt->tab[i].name) + 2));
+
+        strcat(path, path);
+        if(!(wt->tab[i].name[0] && wt->tab[i].name[0] == '/')) strcat(path, "/");
+            strcat(path, wt->tab[i].name);
+
+        if (file_exists(path)){
+            blobFile(path);
+            wt->tab[i].hash = sha256file(path);
+            wt->tab[i].mode = getChmod(path);
         }
-        i++;
+        else{
+            WorkTree *wt_rep = initWorkTree();
+            List *L = listdir(path);
+            for (Cell *c = *L; c != NULL; c = c->next){
+                if (ctos(c)[0] == '.')
+                continue;
+                appendWorkTree(wt_rep, ctos(c), NULL, 0);
+            }
+            wt->tab[i].hash = saveWorkTree(wt_rep, path);
+            wt->tab[i].mode = getChmod(path);
+        }
     }
     return blobWorkTree(wt);
 }
@@ -371,41 +397,35 @@ int isWorkTree(char * hash){
     return -1;
  }
 
-void restoreWorkTree(WorkTree* wt, char* path){
-	if(wt == NULL ){
-        printf("wt est null rwt");
-		exit(EXIT_FAILURE);
-	}
-    if(path==NULL){
-        printf("path est null rwt");
-        exit(EXIT_FAILURE);
-    }
-	for (int i = 0; i < wt->n; i++){
-		char* absPath= conct(path,wt->tab[i].name);
-        char* copyPath=hashToPath(wt->tab[i].hash);
-        char* hash=wt->tab[i].hash;
-        int status_Wt= isWorkTree(wt->tab[i].hash);
-        if(status_Wt==-1){
-            printf("Le fichier %s n'existe pas à l'endroit indiqué (peut-être une erreur du paramètre path ?) -> restoreWorkTree\n",absPath);
-            exit(EXIT_FAILURE);
-        }
-        if(status_Wt==0){
-            cp(absPath,copyPath);
-            setMode(wt->tab[i].mode,absPath);
-        }
-        if(status_Wt==1){
-            copyPath=realloc(copyPath,strlen(copyPath)+3);
-            strcat(copyPath,".t");
-            strcat(copyPath,"\0");
-            WorkTree* wt2=ftwt(copyPath);
-            restoreWorkTree(wt2,absPath);
-            setMode(getChmod(copyPath),absPath);
-            freeWorkTree(wt2);
-        }
-        free(absPath);
-        free(copyPath);
+void restoreWorkTree(WorkTree *wt, char *path)
+{
+  for (int i = 0; i<wt -> n; i++)
+  {
+    size_t size = strlen(path) + strlen(wt->tab[i].name) + 2;
+    char *full_path = malloc(sizeof(char) * size);
+    memset(full_path, 0, size);
 
-	}
+    strcat(full_path, path);
+    strcat(full_path, "/");
+    strcat(full_path, wt->tab[i].name);
+
+    char *hash = wt->tab[i].hash;
+    if (isWorkTree(hash) == 0)
+    { // si c’est un fichier
+    char *copyPath = filePath(hash);
+      cp(full_path, copyPath);
+      setMode(getChmod(copyPath), full_path);
+    }
+    else if (isWorkTree(hash) == 1)
+    { // si c’est un repertoire
+      char *copyPath = workTreeToPath(hash);
+      WorkTree *nwt = ftwt(copyPath);
+      restoreWorkTree(nwt, full_path);
+      setMode(getChmod(copyPath), full_path);
+      freeWorkTree(nwt);
+    }
+    free(full_path);
+  }
 }
 
 

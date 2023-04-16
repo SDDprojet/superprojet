@@ -178,6 +178,7 @@ void myGitCommit(char* branch_name, char* message) {
     createUpdateRef(branch_name, commit_hash);
     createUpdateRef("HEAD", commit_hash);
 }
+/*
 int main() {
     // Exemple d'utilisation des fonctions
 
@@ -199,4 +200,6 @@ int main() {
 
     return 0;
 }
+
+*/
     

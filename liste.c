@@ -29,13 +29,14 @@ Cell* buildCell(char* ch){
 
     return c;
 }
-void freeCell(Cell* c){
-    while(c != NULL){
-        Cell* next=c->next;
-        free(c->data);
-        free(c);
-        c = next;
+void freeCell(Cell *c){
+    if(c == NULL){
+        printf("cellule est null");
+        return;
     }
+
+    if(c->data) free(c->data);
+    free(c);
 }
 void insertFirst(List *L,Cell* C){
     C->next=*L;
@@ -195,6 +196,34 @@ int file_exists(char *file){
     }
     return 1;
 }
+
+char *filePath(const char *hash){
+    char *path = malloc(sizeof(char) * 256);
+
+    if(path == NULL || hash == NULL){
+        printf("path est Null ");
+        return NULL;
+    }
+
+    path[0] = '\0';
+
+    char *hash_path = hashToPath(hash);
+
+    if(hash_path == NULL){
+        printf("hashToPath a retourné NULL avec %s", hash);
+        free(path);
+        return NULL;
+    }
+
+    strcat(path, ".");
+    strcat(path, "/");
+    strcat(path, hash_path);
+
+    free(hash_path);
+
+    return path;
+}
+
 
 struct stat st = {0};
 

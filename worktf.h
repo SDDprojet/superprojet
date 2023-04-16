@@ -41,6 +41,8 @@ WorkTree* ftwt(char* file);
 
 char* hashToFile (char* hash );
 
+char* workTreeToPath(const char* hash);
+
 
 char* blobWorkTree(WorkTree* wt);
 
@@ -54,7 +56,6 @@ int isFile2(const char* name);
 
 char* saveWorkTree(WorkTree* wt, char* path);
 
-char* saveWorkTree2(WorkTree* wt, char* path);
 
 int isWorkTree(char* hash);
 

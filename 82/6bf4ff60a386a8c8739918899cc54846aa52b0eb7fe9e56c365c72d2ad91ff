@@ -121,9 +121,9 @@ int main(){
     //freeCell(c1);
     //freeCell(c2);
     //freeCell(c3);
-    freeKeyVal(k);
-    free(k2);
-    freeWorkTree(watermelon);
+    //freeKeyVal(k);
+    //free(k2);
+    //freeWorkTree(watermelon);
 
 
 
