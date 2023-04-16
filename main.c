@@ -48,7 +48,7 @@ int main(){
     printf("\n");
     List* m = listdir(".");
     printf("%s\n",ltos(m)); 
-    printf("---------------Workfile/worktree-----------\n");
+    printf("---------------exercice 4 -------------\n---------------Workfile/worktree-----------\n");
     printf("\n");
     printf("\n");
     WorkFile* wifi = createWorkFile("waifu");
@@ -68,11 +68,6 @@ int main(){
     printf("--------------------Exercice 5--------------------\n");
     printf("\n");
     printf("blobWorkTree(watermelon) = %s \n ",blobWorkTree(watermelon));
-    
-
-    
-    //printf("%d \n",file_exists("exo2.c"));
-
     printf("\n");
     printf("\n");
     printf("-------------------Exercice 6-----------------\n");
