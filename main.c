@@ -76,16 +76,19 @@ int main(){
     commitSet(c,"mmomoo","mmmmm");
     
     
-    printf("commit get de la clé warintara return the value = %s \n",commitGet(c,"warintara"));
-    printf("cts de commit c = %s \n",cts(c));
+    printf("commit get de la clé warintara return the value = %s \n\n",commitGet(c,"warintara"));
+    printf("cts de commit c : \n %s \n",cts(c));
 
     ctf(c,"test_ctf2");
+    Commit* c_1=createCommit("2222");
+    commitSet(c_1,"warintara","dreamu");
+    commitSet(c_1,"mmomoo","mmmmm");
 
-    printf("ftc de test_ctf = %s",cts(ftc("test_ctf2"))); 
-
-    char* ss = cts(c);
-    printf("stc = %s\n",stc(ss));
-    Commit* c_stc = stc(ss);
+    printf("ftc de test_ctf : \n %s",cts(ftc("test_ctf2"))); 
+    char* c_cts = cts(c_1);
+    char* ss = stc(c_cts);
+    printf("stc = %s\n",ss);
+    
     printf("\n");
     printf("-------------------Exercice 7-----------------\n");
     printf("\n");

@@ -63,7 +63,7 @@ Commit* initCommit(){ //deja testé
     Commit* c = malloc(sizeof(Commit));
     c->size = SIZE;
     c->T = malloc(SIZE*sizeof(kvp*));
-    for(int i = 0; i< c->size ; i++ ){
+    for(int i = 0; i< SIZE ; i++ ){
         c->T[i] = NULL;
     }
     c->n = 0;
@@ -151,26 +151,22 @@ char *cts(Commit *c) {
 }
 
 
-Commit *stc(char *ch) {
-    int pos = 0;
-    int n_pos = 0;
-    int sep = '\n';
-    char *ptr;
-    char *result = malloc(sizeof(char) * 10000);
-    Commit *c = initCommit(10);
-    while (pos < strlen(ch)) {
-        ptr = strchr(ch + pos, sep);
-        if (ptr == NULL)
-            n_pos = strlen(ch) + 1;
-        else
-            n_pos = ptr - ch + 1;
-        memcpy(result, ch + pos, n_pos - pos - 1);
-        result[n_pos - pos - 1] = '\0';
-        pos = n_pos;
-        kvp *elem = stkv(result);
-        commitSet(c, elem->key, elem->value);
-    }
-    return c;
+Commit *stc(char *s)
+{
+  Commit *c = initCommit();
+
+  char *token = strtok(s, "\n");
+
+  while(token){
+    kvp* pair = stkv(token);
+
+    commitSet(c, pair->key, pair->value);
+    freeKeyVal(pair);
+    token = strtok(NULL, "\n");
+  }
+
+
+  return c;  
 }
 void ctf(Commit* c, char* file){ //dejà testé 
     FILE* dest = fopen(file,"w");
