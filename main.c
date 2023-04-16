@@ -44,8 +44,10 @@ int main(){
     printf("watermelon =\n %s  \n",wtts(watermelon));
     printf("wttf = %d \n",wttf(watermelon,"warintaralala"));
     printf("ftwt =\n %s \n",wtts(ftwt("warintaralala")));
+    printf("\n");
     printf("--------------------Exercice 5--------------------\n");
-    printf("blobWorkTree(watermelon) = %s \n ",blobWorkTree2(watermelon));
+    printf("\n");
+    printf("blobWorkTree(watermelon) = %s \n ",blobWorkTree(watermelon));
     
 
     List* l2 = ftol("test_ltof.txt");
@@ -57,7 +59,7 @@ int main(){
 	printf("%s\n",searchList(l,"ahh"));
 
 
-    printf("--------------------------------------------\n");
+    printf("\n");
     List* m = listdir(".");
     printf("%s\n",ltos(m)); 
     //printf("%d \n",file_exists("exo2.c"));
@@ -65,6 +67,7 @@ int main(){
     printf("\n");
     printf("\n");
     printf("-------------------Exercice 6-----------------\n");
+    printf("\n");
     kvp* k = stkv("Massyl:Bengana");
     char* k2 = kvts(k);
     printf("stkv de la chaîne 'Massyl:Bengana' = %s \n",k2);
@@ -80,11 +83,12 @@ int main(){
 
     printf("ftc de test_ctf = %s",cts(ftc("test_ctf2"))); 
 
-    //char* ss = cts(c);
-    //printf("stc = %s\n",stc(ss));
-    //stc(ss)
-
+    char* ss = cts(c);
+    printf("stc = %s\n",stc(ss));
+    Commit* c_stc = stc(ss);
+    printf("\n");
     printf("-------------------Exercice 7-----------------\n");
+    printf("\n");
     initRefs();
     createUpdateRef("master","123456");
     createUpdateRef("HEAD","123456");
@@ -94,6 +98,20 @@ int main(){
     deleteRef("master");
     printf("ref de HEAD = %s \n",getRef("HEAD"));
     createFile("boobies");
+
+    //désallouer
+    freeList(l);
+    freeList(l3);
+    freeList(m);
+    freeList(m1);
+    freeCell(c1);
+    freeCell(c2);
+    freeCell(c3);
+    freeKeyVal(k);
+    free(k2);
+    freeWorkTree(watermelon);
+
+
 
 	return 0; 
 }

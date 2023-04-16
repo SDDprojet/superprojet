@@ -22,9 +22,13 @@ char* wfts(WorkFile* wf);
 
 WorkFile* stwf(char* ch);
 
+WorkTree* stwt(char* ch);
+
 WorkTree* initWorkTree();
 
 int inWorkTree(WorkTree* wt, char* name);
+
+void freeWorkTree(WorkTree* wt);
 
 int appendWorkTree(WorkTree* wt, char* name, char* hash, int mode);
 /*qui ajoute un fichier ou r ́epertoire au WorkTree (s’il n’existe pas d éjà*/
@@ -38,18 +42,22 @@ WorkTree* ftwt(char* file);
 char* hashToFile (char* hash );
 
 
-char* blobWorkTree2(WorkTree* wt);
+char* blobWorkTree(WorkTree* wt);
 
 void restoreWorkTree(WorkTree* wt, char* path);
 
 char* conct(char* c1, char* c2);
 
+int isFile(const char* name);
+
 int isFile2(const char* name);
 
 char* saveWorkTree(WorkTree* wt, char* path);
 
-int isFile(const char* name);
+char* saveWorkTree2(WorkTree* wt, char* path);
 
-int isWorkTree(WorkTree* wt);
+int isWorkTree(char* hash);
+
+void restoreWorkTree(WorkTree* wt, char* path);
 
 #endif 

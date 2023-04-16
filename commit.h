@@ -39,5 +39,6 @@ void ctf(Commit* c, char* file);
 
 Commit* ftc(char* file);
 
+Commit* stc(char *ch);
 
 #endif

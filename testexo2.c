@@ -394,7 +394,7 @@ void freeWorkTree(WorkTree* wt) {
     if (wt == NULL) {
         return;
     }
-    printf("freeeeeeeee");
+    printf("-free worktree-");
 
     for (int i = 0; i < wt->size; i++) {
         free(wt->tab[i].name);
@@ -402,7 +402,7 @@ void freeWorkTree(WorkTree* wt) {
     }
     free(wt->tab);
     free(wt);
-    printf("finnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+    printf("fin de freeWroktree");
 }
 
 int appendWorkTree(WorkTree* wt, char* name, char* hash, int mode) {
