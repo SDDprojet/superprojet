@@ -187,26 +187,32 @@ void ctf(Commit* c, char* file){ //dejà testé
     fclose(dest);
 }
 
-Commit* ftc(char* file) {
-    FILE* f = fopen(file, "r"); // Correction du mode d'ouverture du fichier
+Commit *ftc(const char *file)
+{
+  FILE *f = fopen(file, "r");
 
-    if (f == NULL) {
-        printf("Problème d'ouverture fichier \n");
-        return NULL; // Correction de la gestion d'erreur pour le cas d'échec d'ouverture de fichier
-    }
+  if(f == NULL){
+    return NULL;
+  }
 
-    char buffer[256];
-    char* chaine = malloc(sizeof(char) * 256); // Allocation de mémoire pour la variable chaine
-    kvp* ptr = malloc(sizeof(kvp)); // Déclaration et initialisation de la variable ptr
-    while (fgets(buffer, sizeof(buffer), f) != NULL) {
-        strcat(chaine, buffer);
+  size_t size = sizeof(char) * 256;
+  char *s = malloc(size);
+
+  memset(s, 0, size);
+
+  char buf[256];
+  while(fgets(buf, 256, f)){
+    if(strlen(buf) + strlen(s) >= size){
+      size *= 2; s = realloc(s, size);
     }
-    Commit* c = stc(chaine);
-    fclose(f);
-    free(chaine); // Libération de la mémoire allouée pour chaine
-    free(ptr); // Libération de la mémoire allouée pour ptr
-    return c; // Retour du pointeur vers Commit c
+    strcat(s, buf);
+  }
+
+  Commit *c = stc(s);
+  free(s);
+  return c;
 }
+
 char * blobCommit ( Commit * c ) {
     char fname[100] = "/tmp/myfileXXXXXX" ;
     int fd =mkstemp(fname);

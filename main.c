@@ -84,10 +84,11 @@ int main(){
     commitSet(c_1,"warintara","dreamu");
     commitSet(c_1,"mmomoo","mmmmm");
 
-    printf("ftc de test_ctf : \n %s",cts(ftc("test_ctf2"))); 
-    char* c_cts = cts(c_1);
-    char* ss = stc(c_cts);
-    printf("stc = %s\n",ss);
+    char* test2 =cts(ftc("test_ctf2"));
+    printf("ftc de test_ctf : \n %s",test2); 
+
+    char* ss = stc(test2);
+    printf("[stc] =\n %s\n",cts(ss));
     
     printf("\n");
     printf("-------------------Exercice 7-----------------\n");
