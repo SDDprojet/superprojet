@@ -12,8 +12,26 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <stdbool.h>
 
 #define SIZE 20
+
+
+void freeCommit(Commit *c)
+{
+  if(c == NULL){
+    printf("commit est nul \n");
+    return;
+  }
+
+  for(int i = 0; i < c->size; i++)
+    if(c->T[i] != NULL) freeKeyVal(c->T[i]);
+
+  free(c->T);
+  free(c);
+
+  c = NULL;
+}
 
 void initRefs(){ //deja tester
     DIR* dir = opendir(".refs");
@@ -112,6 +130,8 @@ char* getRef(char* ref_name){ //déjà testé
     return ref;
 }
 
+
+
 void createFile(char* file) { //déjà testé
     if(file == NULL) {
         printf("Le nom de fichier est NULL!\n");
@@ -144,66 +164,57 @@ void myGitAdd(char* file_or_folder) {
     free(wt);
 }
 
-void myGitCommit(char* branch_name, char* message) {
-    if(file_exists(".refs") == 0) {
-        printf("Initialiser d'abord les références du projet\n");
-        return;
-    }
-    // Comparer si HEAD et branch_name pointent vers la même chose
-    char ch[256];
-    sprintf(ch, ".refs/%s", branch_name);
-    if(file_exists(ch) == 0) {
-        printf("La branche n'existe pas\n");
-        return;
-    }
-    char* bn_ref = getRef(branch_name);
-    char* head_ref = getRef("HEAD");
-    if(strcmp(bn_ref, head_ref) != 0) {
-        printf("HEAD doit pointer sur le dernier commit de la branche\n");
-        return;
-    }
-    // Charger worktree puis le supprimer
-    WorkTree* wt = ftwt(".add");
-    system("rm .add");
-    // Enregistrer instantané de ce worktree et récupérer son hash
-    char* hashwt = saveWorkTree(wt, ".");
-    // Créer commit c
-    Commit* c = createCommit(hashwt);
-    // Lire le fichier branch_name
-    char* predecessor = getRef(branch_name);
+void myGitCommit(const char *branch_name, const char *message)
+{
+  if(!file_exists(".refs")){
+    printf("Il faut d'abord initialiser les références du projets");
+    return;
+  }
 
-    if(strlen(predecessor) != 0) {
-        commitSet(c, "predecessor", bn_ref);
-    }
-    if(message != NULL) {
-        commitSet(c, "message", message);
-    }
-    char* commit_hash = blobCommit(c);
-    createUpdateRef(branch_name, commit_hash);
-    createUpdateRef("HEAD", commit_hash);
-}
-/*
-int main() {
-    // Exemple d'utilisation des fonctions
+  char path[256] = ".refs/";
+  strcat(path, branch_name);
+  if(!file_exists(path)){
+    printf("La branche %s n'existe pas", path);
+    return;
+  }
 
-    // Utilisation de la fonction getRef
-    char* ref = getRef("my_branch");
-    if(ref == NULL) {
-        printf("Erreur lors de l'appel à getRef\n");
-    } else {
-        printf("Référence : %s\n", ref);
-    }
+  char *last_hash = getRef(branch_name);
+  char *head_hash = getRef("HEAD");
 
-    // Utilisation de la fonction createFile
-    createFile("myfile.txt");
-    printf("Fichier créé : myfile.txt\n");
+  bool is_different = strcmp(last_hash, head_hash);
 
-    // Utilisation de la fonction myGitCommit
-    myGitCommit("my_branch", "Mon message de commit");
-    printf("Commit effectué avec succès\n");
+  free(head_hash);
 
-    return 0;
+  if(is_different){
+    printf("HEAD doit pointer sur le dernier commit de la branche %s", branch_name);
+    return;
+  }
+
+  WorkTree *wt = ftwt(".add");
+
+  if(wt == NULL){
+    print("Il faut crée le fichier .add");
+    return;
+  }
+
+  char *hash = saveWorkTree(wt, ".");
+  Commit *c = createCommit(hash);
+  free(hash);
+
+  if (strlen(last_hash) > 0){
+    commitSet(c, "predecessor", last_hash);
+  }
+  if(message != NULL){
+    commitSet(c, "message", message); // commit["message"] = message;
+  }
+  free(last_hash);
+
+  char *commit_hash = blobCommit(c);
+  createUpdateRef(branch_name, commit_hash);
+  createUpdateRef("HEAD", commit_hash);
+
+  free(commit_hash);
+  freeCommit(c);
+  
 }
 
-*/
-    

@@ -105,6 +105,7 @@ int main(){
     printf("\n");
     initRefs();
     createUpdateRef("master","123456");
+    createUpdateRef("HEAD","123456");
     createUpdateRef("massyl","est-ce que tu sais que je taime");
     printf("%s \n",ltos(listdir(".refs")));
     printf("%d\n",file_exists2(".refs/master"));
@@ -113,8 +114,8 @@ int main(){
     myGitAdd("main.c");
     //myGitCommit("master","modif");
     printf("%s \n",ltos(listdir(".refs")));
-    myGitCommit("massyl","modif");
-    //myGitCommit("HEAD","modif");
+    //myGitCommit("massyl","modif");
+    myGitCommit("HEAD","modif");
 
     //désallouer
     freeList(l);

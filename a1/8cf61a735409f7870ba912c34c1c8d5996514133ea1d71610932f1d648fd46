@@ -113,7 +113,7 @@ int main(){
     myGitAdd("main.c");
     //myGitCommit("master","modif");
     printf("%s \n",ltos(listdir(".refs")));
-    myGitCommit("massyl","modif");
+    //myGitCommit("massyl","modif");
     //myGitCommit("HEAD","modif");
 
     //désallouer
