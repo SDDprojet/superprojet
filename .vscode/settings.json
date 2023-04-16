@@ -6,6 +6,9 @@
         "stat.h": "c",
         "liste.h": "c",
         "stdlib.h": "c",
-        "errno.h": "c"
+        "errno.h": "c",
+        "stdbool.h": "c",
+        "unistd.h": "c",
+        "fcntl.h": "c"
     }
 }

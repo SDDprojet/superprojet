@@ -17,21 +17,7 @@
 #define SIZE 20
 
 
-void freeCommit(Commit *c)
-{
-  if(c == NULL){
-    printf("commit est nul \n");
-    return;
-  }
 
-  for(int i = 0; i < c->size; i++)
-    if(c->T[i] != NULL) freeKeyVal(c->T[i]);
-
-  free(c->T);
-  free(c);
-
-  c = NULL;
-}
 
 void initRefs(){ //deja tester
     DIR* dir = opendir(".refs");
@@ -164,7 +150,7 @@ void myGitAdd(char* file_or_folder) {
     free(wt);
 }
 
-void myGitCommit(const char *branch_name, const char *message)
+void myGitCommit(char *branch_name, char *message)
 {
   if(!file_exists(".refs")){
     printf("Il faut d'abord initialiser les références du projets");
@@ -193,7 +179,7 @@ void myGitCommit(const char *branch_name, const char *message)
   WorkTree *wt = ftwt(".add");
 
   if(wt == NULL){
-    print("Il faut crée le fichier .add");
+    printf("Il faut crée le fichier .add");
     return;
   }
 

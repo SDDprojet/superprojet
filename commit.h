@@ -22,7 +22,7 @@ char* kvts(kvp* k);
 
 kvp* stkv(char* s);
 
-
+void freeCommit(Commit* c);
 
 Commit* initCommit();
 

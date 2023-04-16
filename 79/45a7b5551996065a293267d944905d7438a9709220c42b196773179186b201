@@ -113,9 +113,14 @@ int main(){
     myGitAdd("main.c");
     //myGitCommit("master","modif");
     printf("%s \n",ltos(listdir(".refs")));
-    //myGitCommit("massyl","modif");
-    //myGitCommit("HEAD","modif");
+    myGitCommit("massyl","modif");
 
+
+    printf("\n");
+    printf("\n");
+    printf("-------------------Exercice 8-----------------\n");
+    printf("\n");
+    printf("\n");
     //désallouer
     freeList(l);
     freeList(l3);

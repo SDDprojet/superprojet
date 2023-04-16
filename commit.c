@@ -79,7 +79,21 @@ kvp* stkv(char* s){ //deja testé
     kvp* k=createKeyVal(mot1,mot2);
     return k;
 }
+void freeCommit(Commit *c)
+{
+  if(c == NULL){
+    printf("commit est nul \n");
+    return;
+  }
 
+  for(int i = 0; i < c->size; i++)
+    if(c->T[i] != NULL) freeKeyVal(c->T[i]);
+
+  free(c->T);
+  free(c);
+
+  c = NULL;
+}
 Commit* initCommit(){ //deja testé
     Commit* c = malloc(sizeof(Commit));
     if(c==NULL){

@@ -1,7 +1,9 @@
 #include "worktf.h"
-#include "filehash.h"
-#include "liste.h"
 #include "commit.h"
+#include "filehash.h"
+#include "branch.h"
+#include "liste.h"
+#include "ref.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,7 +95,7 @@ void printBranch(char* branch){
     }
 
 }
-void printBranch(char* branch){
+void printBranch2(char* branch){
     if (branch == NULL){
         printf("Erreur : pointeur NULL passé en argument.\n");
         return;
@@ -145,7 +147,7 @@ List* branchList(char* branch){
     }
     return L;
 }
-List* branchList(char* branch){
+List* branchList2(char* branch){
     if (branch == NULL){
         printf("Erreur : pointeur NULL passé en argument.\n");
         return NULL;

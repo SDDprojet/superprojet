@@ -5,7 +5,6 @@ void initRefs();
 
 void createUpdateRef(char* ref_name, char* hash);
 
-void freeCommit(Commit* c);
 
 void deleteRef(char* ref_name);
 

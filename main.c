@@ -1,6 +1,7 @@
 #include "worktf.h"
 #include "commit.h"
 #include "filehash.h"
+#include "branch.h"
 #include "liste.h"
 #include "ref.h"
 #include <stdio.h>
@@ -114,8 +115,14 @@ int main(){
     //myGitCommit("master","modif");
     printf("%s \n",ltos(listdir(".refs")));
     myGitCommit("massyl","modif");
-    //myGitCommit("HEAD","modif");
 
+
+    printf("\n");
+    printf("\n");
+    printf("-------------------Exercice 8-----------------\n");
+    printf("\n");
+    printf("\n");
+    initBranch();
     //désallouer
     freeList(l);
     freeList(l3);

@@ -13,6 +13,8 @@ char* hashTopathCommit(char* hash);
 
 void printBranch(char* branch);
 
+void printBranch2(char* branch);
+
 List* branchList(char* branch);
 
 List* getAllCommits();
