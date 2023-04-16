@@ -124,7 +124,7 @@ char* cts2(Commit* c){ //deja testé
     }
     return chaine ;
 }
-char *cts(Commit *c) {
+char *cts(Commit *c) { //déjà tester
     int i = 0;
     int chaine_len = 0;
     int max_len = sizeof(char) * 100 * c->n;
@@ -151,8 +151,7 @@ char *cts(Commit *c) {
 }
 
 
-Commit *stc(char *s)
-{
+Commit *stc(char *s){ //déjà tester 
   Commit *c = initCommit();
 
   char *token = strtok(s, "\n");
@@ -187,8 +186,7 @@ void ctf(Commit* c, char* file){ //dejà testé
     fclose(dest);
 }
 
-Commit *ftc(const char *file)
-{
+Commit *ftc(const char *file){ //déjà tester
   FILE *f = fopen(file, "r");
 
   if(f == NULL){
