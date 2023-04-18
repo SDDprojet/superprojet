@@ -275,29 +275,29 @@ char* conct(char* c1, char* c2){
 
 char* saveWorkTree(WorkTree* wt, char* path){
     for (int i = 0; i < wt->n; i++){
-        char *path = malloc(sizeof(char) * (strlen(path) + strlen(wt->tab[i].name) + 2));
+        char *chaine = malloc(sizeof(char) * (strlen(path) + strlen(wt->tab[i].name) + 2));
 
-        memset(path, 0, sizeof(char) * (strlen(path) + strlen(wt->tab[i].name) + 2));
+        memset(chaine, 0, sizeof(char) * (strlen(path) + strlen(wt->tab[i].name) + 2));
 
-        strcat(path, path);
-        if(!(wt->tab[i].name[0] && wt->tab[i].name[0] == '/')) strcat(path, "/");
-            strcat(path, wt->tab[i].name);
+        strcat(chaine, path);
+        if(!(wt->tab[i].name[0] && wt->tab[i].name[0] == '/')) strcat(chaine, "/");
+            strcat(chaine, wt->tab[i].name);
 
-        if (file_exists(path)){
-            blobFile(path);
-            wt->tab[i].hash = sha256file(path);
-            wt->tab[i].mode = getChmod(path);
+        if (file_exists(chaine)){
+            blobFile(chaine);
+            wt->tab[i].hash = sha256file(chaine);
+            wt->tab[i].mode = getChmod(chaine);
         }
         else{
             WorkTree *wt_rep = initWorkTree();
-            List *L = listdir(path);
+            List *L = listdir(chaine);
             for (Cell *c = *L; c != NULL; c = c->next){
                 if (ctos(c)[0] == '.')
                 continue;
                 appendWorkTree(wt_rep, ctos(c), NULL, 0);
             }
-            wt->tab[i].hash = saveWorkTree(wt_rep, path);
-            wt->tab[i].mode = getChmod(path);
+            wt->tab[i].hash = saveWorkTree(wt_rep, chaine);
+            wt->tab[i].mode = getChmod(chaine);
         }
     }
     return blobWorkTree(wt);
