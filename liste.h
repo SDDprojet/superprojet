@@ -1,6 +1,6 @@
-#ifndef LISTE_H
+#ifndef liste_H
 
-#define LISTE_H
+#define liste_H
 
 typedef struct cell{
 char* data ;

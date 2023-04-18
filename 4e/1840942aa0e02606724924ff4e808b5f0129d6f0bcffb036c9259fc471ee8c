@@ -128,7 +128,6 @@ int main(){
     freeList(l3);
     freeList(m);
     freeList(m1);
-    freeCommit()
     freeKeyVal(k);
     free(k2);
     freeWorkTree(watermelon);

@@ -9,6 +9,10 @@
         "errno.h": "c",
         "stdbool.h": "c",
         "unistd.h": "c",
-        "fcntl.h": "c"
+        "fcntl.h": "c",
+        "ref.h": "c",
+        "string.h": "c",
+        "dirent.h": "c",
+        "time.h": "c"
     }
 }

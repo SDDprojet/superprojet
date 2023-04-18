@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <errno.h>
 #define SIZE 20
 
 
@@ -255,7 +256,7 @@ void cp(char *to,char *from)
         if (stat(current_dir, &sb) == 0) { // Un dossier ou un fichier du meme nom existe
             printf("Le nom '%s' est déjà pris par un fichier ou un dossier. Code : %d", current_dir, errno);
         
-        } else if (mkdir(current_dir) != 0) {
+        } else if (mkdir(current_dir,0700) != 0) {
             free(curs);
             return;
         }
@@ -507,7 +508,7 @@ char* hashToFile (char* hash){
  struct stat st;
  ch2[2] = '\0' ;
  if(stat(ch2,&st) == -1) {
- mkdir(ch2) ;
+ mkdir(ch2,0700) ;
  }
  return hashToPath(hash);
  }

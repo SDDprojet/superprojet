@@ -9,5 +9,5 @@ clean:
 .c.o:   
 	gcc $(GCC_FLAGS) -c $*.c
 
-main: main.o liste.o commit.o filehash.o worktf.o ref.o branch.o
+main: main.o liste.o commit.o filehash.o worktf.o ref.o
 	gcc ${GCC_FLAGS} -o $@ $^
