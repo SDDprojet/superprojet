@@ -15,6 +15,7 @@
 
 
 kvp* createKeyVal(char* key,char* val){ //deja testé
+    // cree un kvp
     kvp* k = malloc(sizeof(kvp));
     k->key = strdup(key);
     k->value = strdup(val);
@@ -37,6 +38,7 @@ kvp* createKeyVal(char* key,char* val){ //deja testé
 }
 
 void freeKeyVal(kvp* kv){
+    //libere l'espace memoire de kv
     if(kv != NULL){
         free(kv->key);
         free(kv->value);
@@ -45,6 +47,7 @@ void freeKeyVal(kvp* kv){
 }
 
 char* kvts(kvp* k){ //deja testé
+//transforme de kvp a string
 	if(k == NULL){
 		return NULL;
 	}
@@ -58,6 +61,7 @@ char* kvts(kvp* k){ //deja testé
 }
 
 kvp* stkv(char* s){ //deja testé
+//transforme de string a kvp
     int r=0;
     char mot1[100];
     char mot2[100];
@@ -79,8 +83,8 @@ kvp* stkv(char* s){ //deja testé
     kvp* k=createKeyVal(mot1,mot2);
     return k;
 }
-void freeCommit(Commit *c)
-{
+void freeCommit(Commit *c){
+//libere l'espace memoire du commit c
   if(c == NULL){
     printf("commit est nul \n");
     return;
@@ -95,6 +99,7 @@ void freeCommit(Commit *c)
   c = NULL;
 }
 Commit* initCommit(){ //deja testé
+//initialise un commit
     Commit* c = malloc(sizeof(Commit));
     if(c==NULL){
          printf("Erreur d'allocation mémoire");
@@ -113,7 +118,7 @@ Commit* initCommit(){ //deja testé
     c->n = 0;
     return c;
 }
-
+//hash
 unsigned long hash(unsigned char *str){ //deja testé
 
 
@@ -142,6 +147,7 @@ void commitSet(Commit* c,char* key, char* value){     //deja testé
     c->n++;
 }
 Commit* createCommit(char* hash){ //deja testé
+//cree un commit
     if(hash==NULL){
          printf("Erreur : createCommit");
          return NULL;
@@ -152,6 +158,7 @@ Commit* createCommit(char* hash){ //deja testé
 }
 
 char* commitGet(Commit* c,char* key){ //deja testé
+//retourne le commit qui a comme cle key
     if(c==NULL || key==NULL){
             printf("Erreur : commitGet");
             return NULL;
@@ -169,6 +176,7 @@ char* commitGet(Commit* c,char* key){ //deja testé
 }
 
 char *cts(Commit *c) { //déjà tester
+//transforme de commit a string
     int i = 0;
     int chaine_len = 0;
     int max_len = sizeof(char) * 100 * c->n;
@@ -179,16 +187,16 @@ char *cts(Commit *c) { //déjà tester
     }
     while (i < c->size) {
         if (c->T[i] != NULL) {
-            char *temp = kvts(c->T[i]);
-            if (chaine_len + strlen(temp) + 1 < max_len) {
-                strcat(chaine, temp);
+            char *tmp = kvts(c->T[i]);
+            if (chaine_len + strlen(tmp) + 1 < max_len) {
+                strcat(chaine, tmp);
                 strcat(chaine, "\n");
-                chaine_len += strlen(temp) + 1;
+                chaine_len += strlen(tmp) + 1;
             } else {
-                printf("Erreur: dépassement de tampon\n");
+                printf("Erreur: cts\n");
                 break;
             }
-            free(temp);
+            free(tmp);
         }
         i++;
     }
@@ -197,6 +205,7 @@ char *cts(Commit *c) { //déjà tester
 
 
 Commit *stc(char *s){ //déjà tester 
+//transforme de string a commit
     Commit *c = initCommit();   
     char *token = strtok(s, "\n");
 
@@ -212,11 +221,11 @@ Commit *stc(char *s){ //déjà tester
 }
 
 
-void ctf(Commit *c, char *file)
-{
+void ctf(Commit *c, char *file){
+//transforme un commit en fichier
   FILE *f = fopen(file, "w");
   if(f == NULL){
-    printf("probleme d'ouverture de fichier \n");
+    printf("probleme d'ouverture de fichier :ctf \n");
     return;
   }
 
@@ -227,17 +236,18 @@ void ctf(Commit *c, char *file)
 }
 
 Commit *ftc(const char *file){ //déjà tester
+//transforme un fichier en commit
   FILE *f = fopen(file, "r");
 
   if(f == NULL){
-    printf("Problème d'ouverture fichier \n");
+    printf("Problème d'ouverture fichier : ftc \n");
     return NULL;
   }
 
   size_t size = sizeof(char) * 256;
   char *s = malloc(size);
   if(s==NULL){
-        printf("Erreur d'allocation de mémoire\n");
+        printf("Erreur d'allocation de mémoire : ftc\n");
         fclose(f);
         return NULL;
   }
@@ -257,8 +267,9 @@ Commit *ftc(const char *file){ //déjà tester
   return c;
 }
 
-char *blobCommit(Commit *c)
-{
+char *blobCommit(Commit *c){
+
+// crée unfichier temporaire c.tmp en écrivant le contenu de la structure dans ce fichier à l'aide de la fonction ctf
   static char template[] = "/tmp/myfileXXXXXX";
   char fname[100];
   strcpy(fname,template);
@@ -276,7 +287,7 @@ char *blobCommit(Commit *c)
   return hash;
 }
 char* commitPath( char* hash){
-
+//renvoi le path du hash
   if(hash == NULL){
     printf( "Tentative de conversion avec un hash null");
     return NULL;
