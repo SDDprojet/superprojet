@@ -42,10 +42,10 @@ List* listdir(char* root_dir);
 //donner une liste des fichiers existés dans ce chemin 
 void freeList(List* l);
 //liberer la liste
-
+int file_exists(char *file);
+//indique si file existe retourne 1, 0 sinon 
 
 _Bool file_exists(char *file);
-// vérifier si ce fichier existe dans le répertoire courant 
 
 List* stol(char* s);
 // transforme une chaine de caracteres representant une liste en une liste chainee
@@ -61,8 +61,8 @@ void cp(char *to, char *from);
 char* hashToPath(char* hash);
 
 void blobFile(char* file);
-
 char *filePath(char *hash);
+void blobFile2(char* file);
 
 int size_list(List l);
 // envoyer la taille de la liste 

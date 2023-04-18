@@ -39,7 +39,7 @@ void createBranch(char* branch){
 }
 
 char* getCurrentBranch(){
-    FILE* f = fopen(".re","r");
+    FILE* f = fopen(".current_branch","r");
     if (f == NULL){
         printf("Erreur d'ouverture du fichier .current_branch.\n");
         return NULL;
@@ -50,7 +50,7 @@ char* getCurrentBranch(){
         fclose(f);
         return NULL;
     }
-    fscanf(f, "%99s", buff); //%99s
+    fscanf(f, "%s", buff); //%99s
     fclose(f);
     return buff;
 }
@@ -120,49 +120,42 @@ void printBranch(char *branch){
   }
 }
 void printBranch2(char* branch){
-    printf("brancch %s \n",branch);
-  char *commit_hash = getRef(branch);
-  printf("pathhhh %s\n",commit_hash);
-  printf("laaa");
-  char *path = commitPath(commit_hash);
-  printf("pathhhh %s",path);
-
-  Commit *c = ftc(path);
-  printf("okkkk");
-  if(path) free(path);
-
-  while(c != NULL){
-    char *msg = commitGet(c, "message");
-    char *prev = commitGet(c, "predecessor");
-    if(msg) {
-      printf("%s => \"%s\"\n", commit_hash, msg);
-      free(msg);
+    if (branch == NULL){
+        printf("Erreur : pointeur NULL passé en argument.\n");
+        return;
     }
 
-    else printf("%s\n", commit_hash);
-
-    if(prev){
-      commit_hash = strdup(prev);
-      free(prev);
-      path = commitPath(commit_hash);
-
-      if(commit_hash) free(commit_hash);
-      freeCommit(c);
-      c = ftc(path);
-      if (c == NULL){
-        printf("ftc a renvoyé null..");
-        if(path) free(path);
-        break;
-      }
-
-      if(path) free(path);
+    char* commit_hash = getRef(branch);
+    if (commit_hash == NULL){
+        printf("Erreur lors de la récupération du hash du commit pour la branche '%s'.\n", branch);
+        return;
     }
-    else {
-      freeCommit(c);
-      c = NULL;
+
+    Commit* c = ftc(hashTopathCommit(commit_hash));
+    if (c == NULL){
+        printf("Erreur lors de la récupération du commit pour le hash '%s'.\n", commit_hash);
+        free(commit_hash); 
+        return;
     }
-  }
+
+    while(c != NULL){
+        if(commitGet(c,"message") != NULL)
+            printf("%s -> %s \n",commit_hash,commitGet(c,"message"));
+        else
+            printf("%s \n",commit_hash);
+        if(commitGet(c,"predecessor") != NULL){
+            commit_hash = commitGet(c,"predecessor");
+            free(c); 
+            c = ftc(hashTopathCommit(commit_hash));
+        }else{
+            free(c); 
+            c = NULL;
+        }
+    }
+
+    free(commit_hash); 
 }
+
 List* branchList(char* branch){
     List* L=initList();
     char* commit_hash=getRef(branch);

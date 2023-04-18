@@ -77,35 +77,35 @@ WorkTree* stwt(char* ch){
 	char hash[255];
 	char mode[255];
 
-	char* debut = ch;
-	char* fin = strchr(ch,'\n');
+	char* begin = ch;
+	char* end = strchr(ch,'\n');
 	int i;
-	i = sscanf(debut,"%s\t%s\t%s",name, hash, mode);
-	if((fin == NULL) && (i != 3)){
+	i = sscanf(begin,"%s\t%s\t%s",name, hash, mode);
+	if((end == NULL) && (i != 3)){
 		return NULL;	
 	} 
 
 	WorkTree* wt = initWorkTree();
 
 	char* content = (char*)malloc(sizeof(char)*SIZE);
-	int size;
+	int size_content;
 
-	while(fin != NULL){
-		size = fin - debut;
-		content = strncpy(content,debut,size);
-		content[size+1] = '\0';
+	while(end != NULL){
+		size_content = end - begin;
+		content = strncpy(content,begin,size_content);
+		content[size_content+1] = '\0';
 		i = sscanf(content,"%s\t%s\t%s",name, hash, mode);
 		if(i == 3){
 			appendWorkTree(wt,name, hash, atoi(mode));
 
 		}
-		debut = fin+1;
-		while(debut[0]=='\n'){
-			debut ++;
+		begin = end+1;
+		while(begin[0]=='\n'){
+			begin ++;
 		}
-		fin = strchr(debut,'\n');
+		end = strchr(begin,'\n');
 	}
-	content = strcpy(content,debut);
+	content = strcpy(content,begin);
 	i = sscanf(content,"%s\t%s\t%s",name, hash, mode);
 	if(i == 3){
 		appendWorkTree(wt,name, hash, atoi(mode));
@@ -146,10 +146,9 @@ void freeWorkTree(WorkTree* wt) {
 }
 
 int appendWorkTree(WorkTree* wt, char* name, char* hash, int mode) {
-    //présence de fichier/répertoire
-    int id = inWorkTree(wt, name); 
+    int index = inWorkTree(wt, name); // Vérifie si le fichier ou répertoire est déjà présent
 
-    if (id == -1) { // Si id n'existe pas
+    if (index == -1) { // Si le fichier ou répertoire n'existe pas
         if(wt->n == wt->size){
             printf("Le WorkTree est complet\n");
             return 1;
@@ -200,8 +199,8 @@ WorkTree* ftwt(char* file){
     }
     WorkTree* wt = initWorkTree();
     WorkFile* wf;
-	char buffer[256];
-	while(fgets(buffer,256,f) != NULL){
+	char buffer[100];
+	while(fgets(buffer,100,f) != NULL){
         buffer[strcspn(buffer, "\n")] = '\0';
         wf = stwf(buffer);
         appendWorkTree(wt,wf->name,wf->hash,wf->mode);
@@ -209,15 +208,15 @@ WorkTree* ftwt(char* file){
 	fclose(f);
 	return wt;
 }
-char* hashToFile(char* hash ){
-    char* ch2 = strdup(hash) ;
-    struct stat st;
-    ch2[2] = '\0' ;
-    if(stat(ch2,&st) == -1) {
-        mkdir(ch2,0700) ;
-    }
-    return hashToPath(hash);
-}
+char* hashToFile (char* hash ) {
+ char* ch2 = strdup(hash) ;
+ struct stat st;
+ ch2[2] = '\0' ;
+ if(stat(ch2,&st) == -1) {
+ mkdir (ch2,0700) ;
+ }
+ return hashToPath ( hash ) ;
+ }
 
 char* workTreeToPath(const char* hash){
   if(hash == NULL){
@@ -270,6 +269,26 @@ char* conct(char* c1, char* c2){
 	return ch;
 }
 
+int isFile(const char* name){
+    DIR* dir = opendir(name);
+    if (dir != NULL) {
+        printf("%s est un répertoire.\n", name);
+        closedir(dir);
+        return 0;
+    }
+    else {
+        FILE* file = fopen(name, "r");
+        if (file != NULL) {
+            printf("%s est un fichier.\n", name);
+            fclose(file);
+            return 1;
+        }
+        else {
+            printf("%s n'est pas un fichier et un répertoire .\n", name);
+            return -1;
+        }
+    }
+}
 
 
 
@@ -299,6 +318,54 @@ char* saveWorkTree(WorkTree* wt, char* path){
             wt->tab[i].hash = saveWorkTree(wt_rep, path);
             wt->tab[i].mode = getChmod(path);
         }
+    }
+    return blobWorkTree(wt);
+}
+
+char * saveWorkTree2(WorkTree *wt,char * path){ //La fonction sauvegarde les fichiers présents dans le WorkTree, dont la racine est àpath
+    if (wt == NULL){ //Teste si le WorkTree est NULL
+        printf("Le WorkTree est NULL -> saveWorkTree\n");
+        exit(EXIT_FAILURE);
+    }
+    if (path == NULL){ //Teste si le path est NULL
+        printf("Le path est NULL -> saveWorkTree\n");
+        exit(EXIT_FAILURE);
+    }
+    char * absPath;
+    for(int i=0;i<wt->n;i++){ //Parcours des WorkFile présents
+        //On récupère le path du WorkFile correspondant
+        printf("i = %d \n ",i);
+        absPath = conct(path,wt->tab[i].name);
+        //On stocke le statut du fichier pour faire nos cas
+        int etat_file = isFile(absPath);
+        if (etat_file == -1){ //Teste si le fichier n'existe pas
+            printf("Le fichier %s n'existe pas à l'endroit indiqué (peut-être une erreur du paramètre path ?) -> saveWorkTree\n",absPath);
+            exit(EXIT_FAILURE);
+        }
+        if (etat_file == 1){ //Teste si le WorkFile est un fichier
+            blobFile(absPath);
+            wt->tab[i].hash = sha256file(absPath);
+            wt->tab[i].mode = getChmod(absPath);
+        }
+        if (etat_file == 0){ //Teste si le WorkFile est un dossier
+            WorkTree *wt2 = initWorkTree();
+            //On récupère l'ensemble des fichiers et dossiers présents dans le dossier
+            List * L = listdir(absPath);
+
+            for(Cell * ptr = *L;ptr !=NULL ; ptr = ptr->next){ //On construit notre WorkTree
+                if(ptr->data[0]=='.'){ //Ignore les fichiers commençant par .
+                    continue;
+                }
+                char buff[1000];
+                strcpy(buff,ptr->data);
+                appendWorkTree(wt2,buff,NULL,777);
+            }
+            freeList(L);
+            wt->tab[i].hash = saveWorkTree(wt2,absPath);
+            wt->tab[i].mode = getChmod(absPath);
+            freeWorkTree(wt2);
+        }
+    free(absPath);
     }
     return blobWorkTree(wt);
 }
@@ -339,6 +406,7 @@ void restoreWorkTree(WorkTree *wt, char *path)
     strcat(full_path, path);
     strcat(full_path, "/");
     strcat(full_path, wt->tab[i].name);
+    printf("\n\n\nfull path = %s \n\n\n",full_path);
 
     char *hash = wt->tab[i].hash;
     if (isWorkTree(hash) == 0)

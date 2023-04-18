@@ -24,47 +24,62 @@ char* workTreePath( char* hash){
 	return strcat(hashToPath(hash),".t");;
 }
 
-void restoreCommit(char*hash_commit){
-	//2eme partie du ou debug de 1h
-	if((hash_commit == NULL) || strcmp(hash_commit," ") == 0){//Si NULL ou si pas de commit
-		return ;
-	}
+void restoreCommit(char *hash){
+	char *path = commitPath(hash);
+	Commit *c = ftc(path);
 
-	char* cur_branch = getCurrentBranch();
-
-	List* list_commit = branchList(cur_branch);
-
-	Cell* commit = searchList(list_commit,hash_commit);
-
-	if(commit == NULL){
+	if(c == NULL){
+		perror("La fonction ftc a renvoyé NULL");
 		return;
 	}
 
-	char* path_commit = hashToPath(commit->data); //commit->data  avec le point c (a creer commit_to_path)
-	WorkTree* wt_commit = ftwt(hashToPath(commitGet(ftc(path_commit), "tree")));
-	restoreWorkTree(wt_commit,".");
+	char *wt_hash = commitGet(c, "tree");
+	if(wt_hash == NULL){
+		perror("Le commit de contien pas tree ?");
+		return;
+	}
+
+	char *tree_hash = workTreePath(wt_hash);
+	if(tree_hash == NULL){
+		perror("Impossible de convertir en chemin d'accès...");
+		return;
+	}
+
+	WorkTree *wt = ftwt(tree_hash);
+	if(wt == NULL){
+		perror("Problème de conversion en WorkTree du fichier ");
+		return;
+	}
 	
+	restoreWorkTree(wt, ".");
+
+	free(path);
+	free(tree_hash);
+	freeCommit(c);
+	freeWorkTree(wt);
 }
-void myGitCheckoutBranch(char* branch){
-	if(branch == NULL){
-		return;
-	}
 
-	FILE* f = fopen(".current_branch","w");
+void myGitCheckoutBranch(char *branch){
+	FILE *f = fopen(".current_branch", "w");
+
 	if(f == NULL){
+		printf("Le fichier a retourné null...");
+		return;
+	}
+	fprintf(f, "%s", branch);
+	fclose(f);
+
+	char* hash_commit = getRef(branch);
+
+	if(hash_commit == NULL){
+		printf("Le hash a retourné null...");
 		return;
 	}
 
-	fprintf(f,"%s",branch);
-	fclose(f);
-	printf("Déplacement dans %s\n",branch);
+	createUpdateRef("HEAD", hash_commit);
+	restoreCommit(hash_commit);
 
-	//printf("Cas -6");
-	createUpdateRef("HEAD",getRef(branch));
-	char* ref = getRef("HEAD");
-	restoreCommit(ref);
-	//free(ref);
-
+	free(hash_commit);
 }
 
 List *filterList(List * L,  char *pattern){
