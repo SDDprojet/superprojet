@@ -1,3 +1,50 @@
 key3 :value3
 key1 :value1
 key2 :value2
+
+```char * saveWorkTree(WorkTree *wt,char * path){ //La fonction sauvegarde les fichiers présents dans le WorkTree, dont la racine est àpath
+    if (wt == NULL){ //Teste si le WorkTree est NULL
+        printf("Le WorkTree est NULL -> saveWorkTree\n");
+        exit(EXIT_FAILURE);
+    }
+    if (path == NULL){ //Teste si le path est NULL
+        printf("Le path est NULL -> saveWorkTree\n");
+        exit(EXIT_FAILURE);
+    }
+    char * absPath;
+    for(int i=0;i<wt->n;i++){ //Parcours des WorkFile présents
+        //On récupère le path du WorkFile correspondant
+        absPath = concat_paths(path,wt->tab[i].name);
+        //On stocke le statut du fichier pour faire nos cas
+        int etat_file = isFile(absPath);
+        if (etat_file == -1){ //Teste si le fichier n'existe pas
+            printf("Le fichier %s n'existe pas à l'endroit indiqué (peut-être une erreur du paramètre path ?) -> saveWorkTree\n",absPath);
+            exit(EXIT_FAILURE);
+        }
+        if (etat_file == 1){ //Teste si le WorkFile est un fichier
+            blobFile(absPath);
+            wt->tab[i].hash = sha256file(absPath);
+            wt->tab[i].mode = getChmod(absPath);
+        }
+        if (etat_file == 0){ //Teste si le WorkFile est un dossier
+            WorkTree *wt2 = initWorkTree();
+            //On récupère l'ensemble des fichiers et dossiers présents dans le dossier
+            List * L = listdir(absPath);
+
+            for(Cell * ptr = *L;ptr !=NULL ; ptr = ptr->next){ //On construit notre WorkTree
+                if(ptr->data[0]=='.'){ //Ignore les fichiers commençant par .
+                    continue;
+                }
+                char buff[1000];
+                strcpy(buff,ptr->data);
+                appendWorkTree(wt2,buff,NULL,777);
+            }
+            FreeList(L);
+            wt->tab[i].hash = saveWorkTree(wt2,absPath);
+            wt->tab[i].mode = getChmod(absPath);
+            freeWorkTree(wt2);
+        }
+    free(absPath);
+    }
+    return blobWorkTree(wt);
+}
