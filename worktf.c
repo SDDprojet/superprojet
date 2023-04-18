@@ -304,7 +304,7 @@ char* saveWorkTree(WorkTree* wt, char* path){
         if(!(wt->tab[i].name[0] && wt->tab[i].name[0] == '/')) strcat(path, "/");
             strcat(path, wt->tab[i].name);
 
-        if (file_exists(path)){
+        if (file_exists2(path)){
             blobFile(path);
             wt->tab[i].hash = sha256file(path);
             wt->tab[i].mode = getChmod(path);

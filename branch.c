@@ -79,22 +79,45 @@ char* hashTopathCommit(char* hash){
     return buff;
 }
 
-void printBranch(char* branch){
-    char* commit_hash=getRef(branch);
-    Commit* c=ftc(hashTopathCommit(commit_hash));
-    while(c!=NULL){
-        if(commitGet(c,"message")!=NULL)
-            printf("%s -> %s \n",commit_hash,commitGet(c,"message"));
-        else
-            printf("%s \n",commit_hash);
-        if(commitGet(c,"predecessor")!=NULL){
-            commit_hash=commitGet(c,"predecessor");
-            c=ftc(hashTopathCommit(commit_hash));
-        }else{
-            c=NULL;
-        }
+void printBranch(char *branch){
+  char *commit_hash = getRef(branch);
+  char *path = commitPath(commit_hash);
+
+  Commit *c = ftc(path);
+
+  if(path) free(path);
+
+  while(c != NULL){
+    char *msg = commitGet(c, "message");
+    char *prev = commitGet(c, "predecessor");
+    if(msg) {
+      printf("%s => \"%s\"\n", commit_hash, msg);
+      free(msg);
     }
 
+    else printf("%s\n", commit_hash);
+
+    if(prev){
+      commit_hash = strdup(prev);
+      free(prev);
+      path = commitPath(commit_hash);
+
+      if(commit_hash) free(commit_hash);
+      freeCommit(c);
+      c = ftc(path);
+      if (c == NULL){
+        printf("ftc a renvoyé null..");
+        if(path) free(path);
+        break;
+      }
+
+      if(path) free(path);
+    }
+    else {
+      freeCommit(c);
+      c = NULL;
+    }
+  }
 }
 void printBranch2(char* branch){
     if (branch == NULL){

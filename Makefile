@@ -1,5 +1,5 @@
 GCC_FLAGS=-Wall -g 
-EXEC= main 
+EXEC= myGit 
 
 all: $(EXEC)
 
@@ -9,5 +9,5 @@ clean:
 .c.o:   
 	gcc $(GCC_FLAGS) -c $*.c
 
-main: main.o liste.o commit.o filehash.o worktf.o ref.o branch.o
+myGit: myGit.o liste.o commit.o filehash.o worktf.o ref.o branch.o checkout.o merge.o
 	gcc ${GCC_FLAGS} -o $@ $^

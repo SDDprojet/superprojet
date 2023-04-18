@@ -12,103 +12,118 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
-#include <iostream>
 #define SIZE 20
 
 
+char* workTreePath( char* hash){
+	if(hash == NULL){
+		perror("Tentative de conversion avec un hash null");
+		return NULL;
+	}
 
-void myGitCheckoutBranch(char* branch){ // à refaire
-    //on modie le fichier .current_branch 
-    char* text = malloc(sizeof(char)*256);
-    sprintf(text,"echo %s > .current_branch",branch);
-    system(text);
-    free(text);
-    //modifie la référence HEAD contenant le dernier hash du dernier commit de branch
-    char* text2 = malloc(sizeof(char)*256);
-    char* hash = hash(branch);
-    sprintf(text2,"echo %s > HEAD",hash);
-    system(text2);
-    free(text2);
-    free(hash);
-
-    //restaurer le worktree correspondant au dernier commit de branch 
-    char* hash_commit = getRef(branch);
-    createUpadateRef("HEAD",hash_commit);
-    restoreCommit(hash_commit);
-}
-void restoreCommit(char* hash_commit){ // à tester
-    char* current = getCurrentBranch();
-
-    List* list_branch = branchList(current);
-
-    Cell* c = searchList(list_branch, hash_commit);
-
-    if(c == NULL){
-        printf("hash_commit n'existe pas \n");
-        return 0;
-        free(list_branch);
-        free(current);
-    }
-
-    char* path = hashToPath(c);
-    Worktree* wt = ftwt(hashToPath(commitGet(ftc(path), "tree")));
-    restoreWorkTree(wt,".");
-
+	return strcat(hashToPath(hash),".t");;
 }
 
-int commence_par(char* c1, char* c2){
-    int i = 0;
-    if(strlen(c1) < strlen(c2)){
-        return 0;
-    }
-    while(c2[i] != '\0' && c1[i] != '\0'){
-        if (c2[i] != c1[i]){ // Correction : la condition pour les caractères différents était incorrecte
-            return 0; // les chaines ne sont pas identiques
-        }
-        i++;
-    }
-    return 1;
+void restoreCommit(char *hash){
+	char *path = commitPath(hash);
+	Commit *c = ftc(path);
+
+	if(c == NULL){
+		perror("La fonction ftc a renvoyé NULL");
+		return;
+	}
+
+	char *wt_hash = commitGet(c, "tree");
+	if(wt_hash == NULL){
+		perror("Le commit de contien pas tree ?");
+		return;
+	}
+
+	char *tree_hash = workTreePath(wt_hash);
+	if(tree_hash == NULL){
+		perror("Impossible de convertir en chemin d'accès...");
+		return;
+	}
+
+	WorkTree *wt = ftwt(tree_hash);
+	if(wt == NULL){
+		perror("Problème de conversion en WorkTree du fichier ");
+		return;
+	}
+	
+	restoreWorkTree(wt, ".");
+
+	free(path);
+	free(tree_hash);
+	freeCommit(c);
+	freeWorkTree(wt);
 }
 
-List* filterList(List* L, char* pattern){
-    List* l = initList();
-    while(L != NULL){
-        if(commence_meme(L->data,pattern)== 1){
-            insertFirst(l, buildCell(L->data));
-        }
-        L = L->next 
-    }
-    return l;
+void myGitCheckoutBranch(char *branch){
+	FILE *f = fopen(".current_branch", "w");
+	fprintf(f, "%s", branch);
+	fclose(f);
+
+	char* hash_commit = getRef(branch);
+
+	if(hash_commit == NULL){
+		perror("Le hash a retourné null...");
+		return;
+	}
+
+	createUpdateRef("HEAD", hash_commit);
+	restoreCommit(hash_commit);
+
+	free(hash_commit);
 }
 
+List *filterList(List * L,  char *pattern){
+    List *filtered = initList();
 
+    int len = strlen(pattern);
+	if(len>0){
+		for(Cell *cursor = *L; cursor != NULL; cursor = cursor->next){
+			if(strncmp(cursor->data, pattern, len)==0){
+				Cell *new_cell = buildCell(cursor->data);
+				insertFirst(filtered, new_cell);
+			}
+		}
+	}
+    return filtered;
+}
 
-void myGitCheckoutCommit(char* pattern){ 
-    //recupere tous les commits 
-    List* list_commit = getAllCommit();
-    //filtre la liste
-    List* filter_list = filterList(list_commit,pattern);
-    
-    if(size_list(filter_list) == 1 ){ // si il y a un seul élément
-        createUpdateRef("HEAD",filter_list->data);
-        return;
-    }
+int sizeList(List *L){
+    int len = 0;
 
-    if(size_list(filter_list) == 0){
-        printf("erreur : il y a pas le hash \n")
-        return;
-    }
+    for(Cell *cursor = *L; cursor != NULL; cursor = cursor->next) 
+        len++;
 
-    if(size_list(filter_list) > 1){
-        char commit;
-        printf("Il y a plusieurs commit possibles, souhaitez-vous aller dans quel commit? \n")
-        for (Cell* p = *filter_list ; p != NULL && commit != 'o\0'; p = p-> next ) {
-            printf("-> %s \n" , ptr->data ) ;
-            printf("voulez-vous choisir ce commit? : o/n \n");
-            scanf("%c",commit);
-        }
-        createUpdateRef("HEAD",p->data);
-    }
+    return len;
+}
 
+void myGitCheckoutCommit( char* pattern){
+	printf("ggggggggggg\n");
+	List *L = getAllCommits();
+	
+	List *filtered_list = filterList(L, pattern);
+	printf("laaaaaa\n");
+	int len = sizeList(filtered_list);
+	if (len == 1){
+		char *commit_hash = (*filtered_list)->data;
+		printf("off");
+		createUpdateRef("HEAD", commit_hash);
+		
+		restoreCommit(commit_hash);
+	}
+	else if (len == 0){
+		printf("Aucun hash ne commence par...\n");
+	}
+	else {
+		printf("Plusieurs hash commencent");
+		for(Cell *c = *filtered_list; c; c = c->next)
+		printf(" -> %s\n", c->data);
+	}
 
+	freeList(L);
+	freeList(filtered_list);
 }

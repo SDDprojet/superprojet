@@ -45,5 +45,7 @@ Commit* stc(char *ch);
 
 char* blobCommit( Commit* c );
 
+char* commitPath(char* hash);
+
 
 #endif

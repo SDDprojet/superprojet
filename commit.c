@@ -275,3 +275,26 @@ char *blobCommit(Commit *c)
   remove(fname);
   return hash;
 }
+char* commitPath(char* hash){//changer le nom de la fonction et dans checkout aussi
+
+if(hash == NULL){
+perror("Tentative de conversion avec un hash null");
+return NULL;
+}
+
+char *hash_path = hashToPath(hash);
+
+if(hash_path == NULL){
+perror("hashToPath a renvoyé NULL");
+return NULL;
+}
+
+char *path = malloc(sizeof(char) * 1000);
+
+
+sprintf(path,"%s.c",hash_path);
+free(hash_path);
+
+return path;
+}
+

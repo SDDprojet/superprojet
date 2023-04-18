@@ -105,6 +105,7 @@ int main(){
     printf("-------------------Exercice 7-----------------\n");
     printf("\n");
     initRefs();
+    createBranch("heheh");
     createUpdateRef("master","123456");
     createUpdateRef("massyl","est-ce que tu sais que je taime");
     printf("%s \n",ltos(listdir(".refs")));
@@ -114,7 +115,7 @@ int main(){
     myGitAdd("main.c");
     //myGitCommit("master","modif");
     printf("%s \n",ltos(listdir(".refs")));
-    myGitCommit("massyl","modif");
+    myGitCommit("master","modif");
 
 
     printf("\n");
@@ -122,9 +123,9 @@ int main(){
     printf("-------------------Exercice 8-----------------\n");
     printf("\n");
     printf("\n");
-    
-    
     initBranch();
+    createBranch("cow");
+    //createBranch("hahahhaaaaaa");
     //désallouer
     freeList(l);
     freeList(l3);

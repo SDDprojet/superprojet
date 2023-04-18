@@ -2,6 +2,7 @@
 #include "commit.h"
 #include "filehash.h"
 #include "liste.h"
+#include "branch.h"
 #include "ref.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -104,6 +105,7 @@ int main(){
     printf("-------------------Exercice 7-----------------\n");
     printf("\n");
     initRefs();
+    createBranch("heheh");
     createUpdateRef("master","123456");
     createUpdateRef("massyl","est-ce que tu sais que je taime");
     printf("%s \n",ltos(listdir(".refs")));
@@ -113,13 +115,23 @@ int main(){
     myGitAdd("main.c");
     //myGitCommit("master","modif");
     printf("%s \n",ltos(listdir(".refs")));
-    myGitCommit("massyl","modif");
+    myGitCommit("HEAD","modif");
 
+
+    printf("\n");
+    printf("\n");
+    printf("-------------------Exercice 8-----------------\n");
+    printf("\n");
+    printf("\n");
+    initBranch();
+    createBranch("cow");
+    //createBranch("hahahhaaaaaa");
     //désallouer
     freeList(l);
     freeList(l3);
     freeList(m);
     freeList(m1);
+    //freeCommit()
     freeKeyVal(k);
     free(k2);
     freeWorkTree(watermelon);

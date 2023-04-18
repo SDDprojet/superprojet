@@ -105,6 +105,7 @@ int main(){
     printf("-------------------Exercice 7-----------------\n");
     printf("\n");
     initRefs();
+    createBranch("heheh");
     createUpdateRef("master","123456");
     createUpdateRef("massyl","est-ce que tu sais que je taime");
     printf("%s \n",ltos(listdir(".refs")));
@@ -122,7 +123,7 @@ int main(){
     printf("-------------------Exercice 8-----------------\n");
     printf("\n");
     printf("\n");
-    //initBranch();
+    initBranch();
     //désallouer
     freeList(l);
     freeList(l3);

@@ -1,15 +1,17 @@
 #ifndef checkout_H
-#define chcekut_H
+#define checkout_H
+
+#include "liste.h"
 
 void myGitCheckoutBranch(char* branch);
 
 void restoreCommit(char* hash_commit);
 
-int commence_par(char* c1, char* c2);
-
 List* filterList(List* L, char* pattern);
 
 void myGitCheckoutCommit(char* pattern);
 
+char* workTreePath(char* hash);
 
+int sizeList(List *L);
 #endif

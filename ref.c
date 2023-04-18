@@ -48,7 +48,7 @@ void createUpdateRef(char* ref_name, char* hash){ //deja testé
     if(ref_name == NULL || hash == NULL){
         return;
     }
-    if(file_exists(ref_name) == 0){
+    if(file_exists2(ref_name)){
         char command1[256];
         sprintf(command1,"touch .refs/%s",ref_name);
         int ret = system(command1);

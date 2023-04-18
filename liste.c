@@ -204,7 +204,7 @@ int file_exists(char *file){
     return 1;
 }
 
-char *filePath(const char *hash){
+char *filePath( char *hash){
     char *path = malloc(sizeof(char) * 256);
 
     if(path == NULL || hash == NULL){
