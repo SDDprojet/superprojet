@@ -123,6 +123,40 @@ int main(){
     printf("hash de blobCommit de commit c_1 vaut = %s \n",blobCommit(c));
     printf("\n");
     printf("\n");
+    printf("-------------------Exercice 7-----------------\n");
+    printf("\n");
+    initRefs();
+
+    printf("%s \n",ltos(listdir(".refs")));
+    printf("%d\n",file_exists(".refs/master"));
+    //deleteRef("master");
+    printf("ref de HEAD = %s \n",getRef("HEAD"));
+    printf("ref de Master = %s \n",getRef("master"));
+    myGitAdd("main.c");
+    //myGitCheckoutBranch("poland");
+    myGitCommit("master","modif");
+    printf("\n%s \n",ltos(listdir(".refs")));
+    myGitCommit("master","modif");
+
+
+    printf("\n");
+    printf("\n");
+    printf("-------------------Exercice 8-----------------\n");
+    printf("\n");
+    printf("\n");
+    initBranch();
+
+    deleteRef("massyl");
+    //createBranch("hahahhaaaaaa");
+    //désallouer
+    freeList(l);
+    freeList(l3);
+    freeList(m1);
+    //freeCommit()
+    freeKeyVal(k);
+    free(k2);
+    freeWorkTree(watermelon);
+
 
 
 	return 0; 
