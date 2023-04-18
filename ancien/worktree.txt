@@ -1,4 +1,0 @@
-file1.txt 	 hash1 	 420
-file2.txt 	 hash2 	 493
-dir1 	 hash3 	 493
-dir2 	 hash4 	 493
