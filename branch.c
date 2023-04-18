@@ -19,6 +19,7 @@
 
 
 void initBranch(){
+    //initialise une branch
     FILE* f = fopen(".current_branch", "w");
     if (f == NULL) {
         printf("Erreur lors de l'ouverture du fichier.\n");
@@ -29,16 +30,19 @@ void initBranch(){
 }
 
 int branchExists(char* branch){
+    //verifie si la branch existe
     List* chemin=listdir(".refs");
     return searchList(chemin,branch) !=NULL;
 }
 
 void createBranch(char* branch){
+    //cree une branch
     char* hash=getRef("HEAD");
     createUpdateRef(branch,hash);
 }
 
 char* getCurrentBranch(){
+    //renvoi la branch courante
     FILE* f = fopen(".re","r");
     if (f == NULL){
         printf("Erreur d'ouverture du fichier .current_branch.\n");
@@ -56,6 +60,7 @@ char* getCurrentBranch(){
 }
 
 char* hashTopathCommit(char* hash){
+    //transforme un hash en path 
     if (hash == NULL){
         printf("Erreur : pointeur NULL passé en argument.\n");
         return NULL;
@@ -80,6 +85,7 @@ char* hashTopathCommit(char* hash){
 }
 
 void printBranch(char *branch){
+    //affiche les messages des commits effectuer sur la branch et la ref de la branch
   char *commit_hash = getRef(branch);
   char *path = commitPath(commit_hash);
 
@@ -119,50 +125,7 @@ void printBranch(char *branch){
     }
   }
 }
-void printBranch2(char* branch){
-    printf("brancch %s \n",branch);
-  char *commit_hash = getRef(branch);
-  printf("pathhhh %s\n",commit_hash);
-  printf("laaa");
-  char *path = commitPath(commit_hash);
-  printf("pathhhh %s",path);
 
-  Commit *c = ftc(path);
-  printf("okkkk");
-  if(path) free(path);
-
-  while(c != NULL){
-    char *msg = commitGet(c, "message");
-    char *prev = commitGet(c, "predecessor");
-    if(msg) {
-      printf("%s => \"%s\"\n", commit_hash, msg);
-      free(msg);
-    }
-
-    else printf("%s\n", commit_hash);
-
-    if(prev){
-      commit_hash = strdup(prev);
-      free(prev);
-      path = commitPath(commit_hash);
-
-      if(commit_hash) free(commit_hash);
-      freeCommit(c);
-      c = ftc(path);
-      if (c == NULL){
-        printf("ftc a renvoyé null..");
-        if(path) free(path);
-        break;
-      }
-
-      if(path) free(path);
-    }
-    else {
-      freeCommit(c);
-      c = NULL;
-    }
-  }
-}
 List* branchList(char* branch){
     List* L=initList();
     char* commit_hash=getRef(branch);
@@ -178,48 +141,14 @@ List* branchList(char* branch){
     }
     return L;
 }
-List* branchList2(char* branch){
-    if (branch == NULL){
-        printf("Erreur : pointeur NULL passé en argument.\n");
-        return NULL;
-    }
 
-    List* L = initList();
-    char* commit_hash = getRef(branch);
-    if (commit_hash == NULL){
-        printf("Erreur lors de la récupération du hash du commit pour la branche '%s'.\n", branch);
-        return NULL;
-    }
-
-    Commit* c = ftc(hashTopathCommit(commit_hash));
-    if (c == NULL){
-        printf("Erreur lors de la récupération du commit pour le hash '%s'.\n", commit_hash);
-        free(commit_hash);
-        return NULL;
-    }
-
-    while(c != NULL){
-        insertFirst(L, buildCell(commit_hash));
-        if(commitGet(c,"predecessor") != NULL){
-            commit_hash = commitGet(c,"predecessor");
-            free(c); 
-            c = ftc(hashTopathCommit(commit_hash));
-        }else{
-            free(c); 
-            c = NULL;
-        }
-    }
-
-    free(commit_hash); 
-    return L;
-}
 
 
 List* getAllCommits(){
     List* L = initList();
     List* content = listdir(".refs");
     if (content == NULL){
-        printf("Erreur lors de la récupération du contenu du répertoire '.refs'.\n");
+        printf("Erreur lors de la récupération du contenu du répertoire : gaC'.refs'.\n");
         return NULL;
     }
 
@@ -228,7 +157,7 @@ List* getAllCommits(){
             continue;
         List* list = branchList(ptr->data);
         if (list == NULL){
-            printf("Erreur lors de la récupération de la liste des commits pour la branche '%s'.\n", ptr->data);
+            printf("Erreur lors de la récupération de la liste des commits pour la branche gaC'%s'.\n", ptr->data);
             freeList(content);
             freeList(L);
             return NULL;
