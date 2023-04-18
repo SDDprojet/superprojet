@@ -1,5 +1,6 @@
 #include "checkout.h"
 #include "worktf.h"
+#include "branch.h" 
 #include "filehash.h"
 #include "liste.h"
 #include "commit.h"

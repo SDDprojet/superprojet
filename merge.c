@@ -20,7 +20,7 @@
 WorkTree *mergeWorkTrees(WorkTree *wt1, WorkTree *wt2, List **conflicts){
     WorkTree *wt = initWorkTree();
 
-  // Recherche des conflits
+  // verifier si il y a le conflit 
     if(wt1){
     for(int i = 0; i < wt1->n; i++)
         for(int j = 0; j < wt2->n; j++)
@@ -31,8 +31,8 @@ WorkTree *mergeWorkTrees(WorkTree *wt1, WorkTree *wt2, List **conflicts){
   // On rajoute les éléments de wt1
     if(wt1){
         for(int i = 0; i < wt1->n; i++){
-            Cell* tmp = searchList(*conflicts, wt1->tab[i].name);
-            if(!tmp){
+            Cell* c1 = searchList(*conflicts, wt1->tab[i].name);
+            if(!c1){
                 appendWorkTree(wt, wt1->tab[i].name, wt1->tab[i].hash, wt1->tab[i].mode);
             }
         }
@@ -40,8 +40,8 @@ WorkTree *mergeWorkTrees(WorkTree *wt1, WorkTree *wt2, List **conflicts){
     // On rajoute les éléments de wt2
     if(wt2){
         for(int i = 0; i < wt2->n; i++){
-            Cell* tmp2 = searchList(*conflicts, wt2->tab[i].name);
-            if(!tmp2){
+            Cell* c2 = searchList(*conflicts, wt2->tab[i].name);
+            if(!c2){
                 appendWorkTree(wt, wt2->tab[i].name, wt2->tab[i].hash, wt2->tab[i].mode);
             }
         }
