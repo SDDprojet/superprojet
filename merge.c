@@ -51,55 +51,31 @@ WorkTree *mergeWorkTrees(WorkTree *wt1, WorkTree *wt2, List **conflicts){
 }
 
 List* merge(char* remote_branch, char* message){
-    char *current_branch_name = getCurrentBranch();
-    char *current_branch = getRef(current_branch_name);
+    char *current_branch_nom = getCurrentBranch();
+    char *current_branch = getRef(current_branch_nom);
 
-    char *current_commit_path = commitPath(current_branch);
-    if(current_commit_path == NULL){
-        perror("Impossible de trouver le chemin du fichier correspondant à la branche");
+    char *path_commit = commitPath(current_branch);
+    if(path_commit == NULL){
+        printf("Impossible de trouver le chemin du fichier correspondant à la branche : ");
     }
     
     char *remote_commit_path = commitPath(getRef(remote_branch));
-    if(current_commit_path == NULL){
-        perror("Impossible de trouver le chemin du fichier correspondant à la branche ..");
-    }
 
-    Commit *current_commit = ftc(current_commit_path);
-    if(current_commit == NULL){
-        perror("Conversion vers commit du fichier  impossible..");
-        return NULL;
-    }
+    Commit *commit_actuel = ftc(path_commit);
 
     Commit *remote_commit = ftc(remote_commit_path);
-    if(current_commit == NULL){
-        perror("Conversion vers commit du fichier  impossible..");
-        return NULL;
-    }
-
-    char *current_wt_hash = commitGet(current_commit, "tree");
-    if(current_wt_hash == NULL){
-        perror("Impossible de trouver tree dans le commit ");
-    }
+    char *wtActuel_hash = commitGet(commit_actuel, "tree");
     char *remote_wt_hash = commitGet(remote_commit, "tree");
-    if(remote_wt_hash == NULL){
-        perror("Impossible de trouver tree dans le commit ");
-    }
-    WorkTree *current_wt = ftwt(workTreePath(current_wt_hash));
-    if(current_wt == NULL){
-        perror("Conversion du worktree ");
-    }
+    WorkTree *wtActuel = ftwt(workTreePath(wtActuel_hash));
 
     WorkTree *remote_wt = ftwt(workTreePath(remote_wt_hash));
-    if(current_wt == NULL){
-        perror("Conversion du worktree ");
-    }
 
     List *conflicts = initList();
 
-    WorkTree* merged_wt = mergeWorkTrees(current_wt, remote_wt, &conflicts);
+    WorkTree* merged_wt = mergeWorkTrees(wtActuel, remote_wt, &conflicts);
 
     if(sizeList(conflicts) > 0){
-        perror("La fusion de la branche  et rencontre des conflits");
+        printf("La fusion de la branche  et rencontre des conflits");
         return conflicts;
     }
 
@@ -107,7 +83,7 @@ List* merge(char* remote_branch, char* message){
 
     Commit *merged_commit = createCommit(hash);
     
-    commitSet(merged_commit, "predecessor", current_wt_hash);
+    commitSet(merged_commit, "predecessor", wtActuel_hash);
     commitSet(merged_commit, "merged_predecessor", remote_wt_hash);
 
     if(message != NULL){
@@ -116,25 +92,25 @@ List* merge(char* remote_branch, char* message){
     
     const char* commit_hash = blobCommit(merged_commit);
 
-    createUpdateRef(current_branch_name, (char*)commit_hash);
+    createUpdateRef(current_branch_nom, (char*)commit_hash);
     createUpdateRef("HEAD", (char*)commit_hash);
 
     deleteRef(remote_branch);
 
     restoreCommit((char*)commit_hash);
 
-    free(current_commit);
+    free(commit_actuel);
     free(remote_commit);
     free(remote_wt);
-    free(current_wt);
+    free(wtActuel);
     free(merged_wt);
-    free(current_wt_hash);
+    free(wtActuel_hash);
     free(remote_wt_hash);
     free(hash);
     freeList(conflicts);
     free(current_branch);
-    free(current_branch_name);
-    free(current_commit_path);
+    free(current_branch_nom);
+    free(path_commit);
     free(remote_commit_path);
     free(merged_commit);
     free((char*)commit_hash);
@@ -148,14 +124,14 @@ void createDeletionCommit(char *branch, List *conflicts, char* message){
 
     char *branch_hash = getRef((char*)branch);
     if(branch_hash == NULL){
-        perror("Récupérer la référence semble impossible...");
+        printf("Récupérer la référence semble impossible...");
         free(branchCour);
         return;
     }
 
     char *commit_path = commitPath(branch_hash);
     if(commit_path == NULL){
-        perror("Transformer le hash en chemin a renvoyé null");
+        printf("Transformer le hash en chemin a renvoyé null");
         free(branch_hash);  
         free(branchCour);
         return;
@@ -165,7 +141,7 @@ void createDeletionCommit(char *branch, List *conflicts, char* message){
 
     Commit *commit = ftc(commit_path);
     if(commit == NULL){
-        perror("La conversion du fichier en commit a renvoyé null");
+        printf("La conversion du fichier en commit a renvoyé null");
         free(commit_path);
         free(branchCour);
         return;
@@ -175,14 +151,14 @@ void createDeletionCommit(char *branch, List *conflicts, char* message){
     char *wt_hash = commitGet(commit, "tree");
     free(commit);
     if(wt_hash == NULL){
-        perror("Commit[\"tree\"] = null");
+        printf("Commit[\"tree\"] = null");
         free(branchCour);
         return;
     }
 
     char *wt_path = workTreePath(wt_hash);
     if(wt_path == NULL){
-        perror("La conversion en chemin a échoué..");
+        printf("La conversion en chemin a échoué..");
         free(wt_hash);
         free(branchCour);
         return;
@@ -191,7 +167,7 @@ void createDeletionCommit(char *branch, List *conflicts, char* message){
     
     WorkTree *wt = ftwt(wt_path);
     if(wt == NULL){
-        perror("ftwt a renvoyé null ");
+        printf("ftwt a renvoyé null ");
         free(branchCour);
         free(wt_path);
         return;
