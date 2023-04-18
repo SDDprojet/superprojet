@@ -105,7 +105,6 @@ Cell* searchList(List* L, char* str){
         }
         tete = tete->next;
     }
-    freeCell(tete);
     return NULL;
 }
 
@@ -175,7 +174,7 @@ void ltof(List* L, char* path){
 List* ftol(char* path){
     FILE * f = fopen(path, "r");
     if(f==NULL){
-        printf("Erreur d'ouverture du fichier ftol  %s\n",path);
+        printf("Erreur d'ouverture du fichierftol  %s\n",path);
         return NULL;
     }
     char buffer[256];
@@ -184,55 +183,6 @@ List* ftol(char* path){
     fclose(f);
     return L;   
 }
-
-
-struct stat st = {0};
-
-_Bool file_exists( char * file ) {
-    struct stat buffer ;
-    return (stat(file,&buffer) == 0);
-}
-void cp(char *to,char *from){
-
-    if(to == NULL || from == NULL){
-        printf("erreurs : la chaine to/from est vide \n");
-    }
-    char *cur = strdup(to);
-    char *file = strrchr(cur, '/');
-    if(file){
-        file[0] = '\0';
-    }
-    char *ch = strtok(cur, "/");
-    char cur_dir[256] = ".";
-    while(ch != NULL){
-        strcat(cur_dir, "/");
-        strcat(cur_dir, ch);
-        struct stat sb;
-        if (stat(cur_dir, &sb) == 0) { // si dossier ou fichier du meme nom existe
-            printf(" '%s' est le nom déjà pris par un fichier ou un dossier.\n",cur_dir);     
-        } else if (mkdir(cur_dir, 0700) != 0) {
-            free(cur);
-            return;
-        }
-    ch = strtok(NULL, "/");
-    }
-    free(cur);
-    FILE *dest = fopen(to, "w");
-    if (dest == NULL){
-        return;
-    }
-    FILE *src = fopen(from, "r");
-    if(src == NULL){
-        fclose(dest);
-        return;
-    }
-    char buf[256];
-    while (fgets(buf, 256, src))
-        fputs(buf, dest);
-    fclose(dest);
-    fclose(src);
-}
-
 void freeList(List* L){
     Cell* current = *L;
     Cell* next;
@@ -244,10 +194,18 @@ void freeList(List* L){
     }
     *L = NULL; 
 }
-
+int file_exists(char *file){
+    List* l = listdir(".");
+    Cell* c = searchList(l,file);
+    freeList(l);
+    if(c == NULL){
+        return 0;
+    }
+    return 1;
+}
 
 char *filePath( char *hash){
-    char* path = malloc(sizeof(char) * 256);
+    char *path = malloc(sizeof(char) * 256);
 
     if(path == NULL || hash == NULL){
         printf("path est Null ");
@@ -256,23 +214,87 @@ char *filePath( char *hash){
 
     path[0] = '\0';
 
-    char *hashP = hashToPath(hash);
+    char *hash_path = hashToPath(hash);
 
-    if(hash == NULL){
-        printf("erreur : hashToPath a la valeur NULL avec %s", hash);
+    if(hash_path == NULL){
+        printf("hashToPath a retourné NULL avec %s", hash);
         free(path);
         return NULL;
     }
 
     strcat(path, ".");
     strcat(path, "/");
-    strcat(path, hashP);
+    strcat(path, hash_path);
 
-    free(hashP);
+    free(hash_path);
 
-    return (hashP);
+    return path;
 }
 
+
+struct stat st = {0};
+
+_Bool file_exists( char * file ) {
+    struct stat buffer ;
+    return (stat(file,&buffer) == 0);
+}
+void cp(char *to,char *from)
+{
+    
+    char *curs = strdup(to);
+    char *file = strrchr(curs, '/');
+
+    if(file) file[0] = '\0';
+
+    char *token = strtok(curs, "/");
+
+
+    char current_dir[256] = ".";
+    while(token != NULL){
+        strcat(current_dir, "/");
+        strcat(current_dir, token);
+
+        struct stat sb;
+        if (stat(current_dir, &sb) == 0) { // Un dossier ou un fichier du meme nom existe
+            printf("Le nom '%s' est déjà pris par un fichier ou un dossier. Code : %d \n", current_dir, errno);
+        
+        } else if (mkdir(current_dir, 0700) != 0) {
+            free(curs);
+            return;
+        }
+
+    token = strtok(NULL, "/");
+    }
+    
+    free(curs);
+
+    FILE *dest = fopen(to, "w");
+
+    if (dest == NULL){
+        return;
+    }
+
+    FILE *source = fopen(from, "r");
+
+    if(source == NULL){
+        fclose(dest);
+        return;
+    }
+
+    char buf[256];
+    while (fgets(buf, 256, source))
+        fputs(buf, dest);
+
+    fclose(dest);
+    fclose(source);
+}
+
+char* hashToPath2(char* hash){
+    char* res = malloc(strlen(hash)+1);
+    strcpy(res,hash);
+    sprintf(res, "%c%c/%s", hash[0],hash[1],hash+2);
+    return res;
+}
 char* hashToPath(char* hash){
     char* res = malloc(strlen(hash)+3);
     if(res == NULL){
@@ -292,10 +314,26 @@ void blobFile(char* file){
     char* hash = sha256file(file);
     char* chemin = hashToPath(hash);
     char command1[500];
-    sprintf(command1, "mkdir -p %c%c",chemin[0],chemin[1]); //-p si le répertoire existe déjà
+    sprintf(command1, "mkdir -p %c%c",chemin[0],chemin[1]);//jai ajouter -p pour eviter les erreurs si le repertoire existe deja 
     system(command1);
     cp(chemin,file);
 }
+/*void blobFile2(char* file){
+    char* hash = sha256file(file) ;
+    printf("hash = %s \n",hash);
+    char* ch2 = strdup(hash) ;
+    printf("%s \n ",ch2);
+    ch2[2] = '\0' ;
+    printf("%s \n ",ch2);
+    if (!file_exists(ch2)){
+       char buff[100];
+       sprintf(buff,"mkdir %s",ch2);
+       system(buff);
+    }
+    char* ch=hashToPath(hash);
+    cp(ch,file);
+ }
+ */
 
 int size_list(List l) {
     int cpt = 0;
@@ -305,3 +343,27 @@ int size_list(List l) {
     }
     return cpt;
 }
+
+/*int main() {
+    List* L = initList();
+    Cell* C1 = buildCell("Hello");
+    Cell* C2 = buildCell("World");
+    insertFirst(L, C1);
+    insertFirst(L, C2);
+    char* s = ltos(L);
+    printf("Liste : %s\n", s);
+    Cell* C3 = searchList(L, "World");
+    if (C3 != NULL) {
+        printf("Element trouvé : %s\n", C3->data);
+    } else {
+        printf("Element non trouvé\n");
+    }
+    freeList(L);
+
+    List* L2 = listdir(".");
+    char* s2 = ltos(L2);
+    printf("Contenu du répertoire : %s\n", s2);
+    freeList(L2);
+
+    return 0;
+} */

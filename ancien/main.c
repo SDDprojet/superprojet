@@ -109,13 +109,12 @@ int main(){
     createUpdateRef("master","123456");
     createUpdateRef("massyl","est-ce que tu sais que je taime");
     printf("%s \n",ltos(listdir(".refs")));
-    printf("%d\n",file_exists2(".refs/master"));
-    deleteRef("master");
+    printf("%d\n",file_exists(".refs/master"));
     printf("ref de HEAD = %s \n",getRef("HEAD"));
     myGitAdd("main.c");
-    //myGitCommit("master","modif");
+    myGitCommit("master","modif");
     printf("%s \n",ltos(listdir(".refs")));
-    myGitCommit("massyl","modif");
+    //myGitCommit("master","modif");
 
 
     printf("\n");
@@ -123,8 +122,7 @@ int main(){
     printf("-------------------Exercice 8-----------------\n");
     printf("\n");
     printf("\n");
-    initBranch();
-    createBranch("cow");
+
     //createBranch("hahahhaaaaaa");
     //désallouer
     freeList(l);
@@ -134,7 +132,7 @@ int main(){
     //freeCommit()
     freeKeyVal(k);
     free(k2);
-    freeWorkTree(watermelon);
+    //freeWorkTree(watermelon);
 
 
 

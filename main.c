@@ -16,11 +16,14 @@
 
 
 int main(){
+   
     printf("\n");
     printf("\n");
-    printf("--------------------Exercice 1, 2 et 3--------------------\n");
+    printf("===================[Exercice 1, 2 et 3]===================\n");
     printf("\n");
     printf("\n");
+
+    //ajouter et insérer les élément dans la liste
 	List* l = initList();
 
 	Cell* c1 = buildCell("test");
@@ -30,43 +33,60 @@ int main(){
 	insertFirst(l,c1);
 	insertFirst(l,c2);
 	insertFirst(l,c3);
-    ltof(l,"test_ltof2222.txt");
+
+    //écriture un fichier avec la liste 
+    ltof(l,"test_ltof.txt");
+    //lecture d'un fichier 
+    List* l2 = ftol("test_ltof2.txt");
+    printf("apres avoir transformé test_ltof222 la liste l2  : %s\n",ltos(l2));
+    
     List* l3 = stol("chaine1|chaine2|chaine3|test|1");
-    printf("test stol => %s\n",ltos(l3)); 
+    printf("test stol de la chaîne 'chaine1|chaine2|chaine3|test|1' => %s\n",ltos(l3)); 
+
     printf("\n\n hastToPath avec fichier main.c = %s \n",hashToPath(sha256file("main.c")));
+    
     blobFile("main.c");
     printf("\n");
     printf("\n");
-    List* l2 = ftol("test_ltof.txt");
-    printf("%s\n",ltos(l));
-    printf("ici c'est l2 %s\n",ltos(l));
-	printf("%s\n",ctos(listGet(l,1)));
+
+    printf("liste to string de l1 = %s\n",ltos(l));
+	printf("listGet(l,1) renvoie la valeur = %s\n",ctos(listGet(l,1)));
     List* m1 = listdir(".");
-    printf("%s\n",ltos(m1)); 
-	printf("%s\n",searchList(l,"ahh"));
+    printf("list directory de répertoire courant : %s\n",ltos(m1)); 
 
+    char* f_path = filePath("main.c");
+    printf("le path du fichier main.c = %s",f_path);
+    printf("hashToPath de liste.o = %s\n",hashToPath("liste.o"));
 
-    printf("\n");
-    List* m = listdir(".");
-    printf("%s\n",ltos(m)); 
-    printf("\n");
-    printf("\n");
-    printf("---------------exercice 4 -------------\n---------------Workfile/worktree-----------\n");
+    printf("la taille de la liste l = %d \n",size_list(l));
+    printf("\n"); 
     printf("\n");
     printf("\n");
-    WorkFile* wifi = createWorkFile("waifu");
-    printf("%s \n ",wfts(wifi)); 
+    printf("===================  exercice 4  ===================\n---------------Workfile/worktree---------------\n");
+    printf("\n");
+    printf("\n");
+    WorkFile* wifi = createWorkFile("woody");
+    printf("le nouveau WorkFile a été crée : %s \n\n ",wfts(wifi)); 
     WorkFile* waaa = stwf(wfts(wifi));
-    printf("wa = %s \n ",wfts(waaa));
+    printf("test de wfts et stwf = %s \n ",wfts(waaa));
     WorkTree* watermelon = initWorkTree();
+    printf("le nouveau workTree 'watermelon 'a été crée\n");
     appendWorkTree(watermelon,"water","12345463",1);
     appendWorkTree(watermelon,"worm","5555555",1);
 
-    printf("la présence de fichier de worktree : %d \n",inWorkTree(watermelon,"water"));
-    
-    printf("watermelon =\n %s  \n",wtts(watermelon));
-    printf("wttf = %d \n",wttf(watermelon,"warintaralala"));
-    printf("ftwt =\n %s \n",wtts(ftwt("warintaralala")));
+    printf("\n\nl'index de 'water' dans le worktree watermelon: %d \n",inWorkTree(watermelon,"water"));
+    printf("l'index de 'worm' dans le worktree watermelon: %d \n",inWorkTree(watermelon,"worm"));
+    printf("l'index de 'windy' dans le worktree watermelon: %d \n\n",inWorkTree(watermelon,"windy"));
+
+    printf("le contenu de watermelon =\n %s  \n",wtts(watermelon));
+    printf("essaie de stwt \n: %s\n",wtts(stwt(wtts(watermelon))));
+    wttf(watermelon,"watermelon.txt");
+    printf("\nftwt =\n %s \n",wtts(ftwt("watermelon.txt")));
+
+    for(int i =0; i<watermelon->n;i++){
+        printf("\nworkTree to path de watermelon : %s\n",workTreeToPath(watermelon->tab[i].hash));
+        printf("hashtoFile :%s \n",hashToFile(watermelon->tab[i].hash));
+    }
     printf("\n");
     printf("--------------------Exercice 5--------------------\n");
     printf("\n");
@@ -105,16 +125,16 @@ int main(){
     printf("-------------------Exercice 7-----------------\n");
     printf("\n");
     initRefs();
-    createBranch("heheh");
-    createUpdateRef("master","123456");
-    createUpdateRef("massyl","est-ce que tu sais que je taime");
+
     printf("%s \n",ltos(listdir(".refs")));
-    printf("%d\n",file_exists2(".refs/master"));
-    deleteRef("master");
+    printf("%d\n",file_exists(".refs/master"));
+    //deleteRef("master");
     printf("ref de HEAD = %s \n",getRef("HEAD"));
+    printf("ref de Master = %s \n",getRef("master"));
     myGitAdd("main.c");
-    //myGitCommit("master","modif");
-    printf("%s \n",ltos(listdir(".refs")));
+    //myGitCheckoutBranch("poland");
+    myGitCommit("master","modif");
+    printf("\n%s \n",ltos(listdir(".refs")));
     myGitCommit("master","modif");
 
 
@@ -124,12 +144,12 @@ int main(){
     printf("\n");
     printf("\n");
     initBranch();
-    createBranch("cow");
+
+    deleteRef("massyl");
     //createBranch("hahahhaaaaaa");
     //désallouer
     freeList(l);
     freeList(l3);
-    freeList(m);
     freeList(m1);
     //freeCommit()
     freeKeyVal(k);

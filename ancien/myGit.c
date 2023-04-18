@@ -43,13 +43,13 @@ int main(int argc, char* argv[]){
 
 
 
-    if(strcmp(argv[1], "init")==0){//ok
+    if(strcmp(argv[1], "init")==0){
         initRefs();
         initBranch();
         return 0;
     }
 
-    if(strcmp(argv[1],"refs-list")==0){//ok
+    if(strcmp(argv[1],"refs-list")==0){
         printf("REFS : \n");
         if(file_exists(".refs")){
             List* L = listdir(".refs");
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
-    if(strcmp(argv[1], "create-ref")==0){//ok
+    if(strcmp(argv[1], "create-ref")==0){
         if(argv[3]==NULL){
             createUpdateRef(argv[2], "");
             return 0;
@@ -75,24 +75,24 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
-    if(strcmp(argv[1], "delete-ref")==0){//ok
+    if(strcmp(argv[1], "delete-ref")==0){
         deleteRef(argv[2]);
         return 0;
     }
 
-    if(strcmp(argv[1],"add")==0){//ok
+    if(strcmp(argv[1],"add")==0){
         for(int i=2; i<argc; i++){
             myGitAdd(argv[i]);
         }
         return 0;
     }
 
-    if(strcmp(argv[1], "clear-add")==0){//ok
+    if(strcmp(argv[1], "clear-add")==0){
         system("rm .add");
         return 0;
     }
 
-    if(strcmp(argv[1], "status")==0){//ok
+    if(strcmp(argv[1], "status")==0){
         printf("Zone de preparation : \n");
         if(file_exists(".add")){
             WorkTree* wt = ftwt (".add");
@@ -104,10 +104,9 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
-    if(strcmp(argv[1], "commit")==0){//okk
+    if(strcmp(argv[1], "commit")==0){
         if(strcmp(argv[3], "-m")==0){
             myGitCommit(argv[2], argv[4]);
-            system("rm .add");
         }
         else{
             myGitCommit(argv[2], NULL);
@@ -115,14 +114,14 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
-     if(strcmp(argv[1], "get-current-branch")==0){//ok
+     if(strcmp(argv[1], "get-current-branch")==0){
         char * current_branch = getCurrentBranch();
         printf("La branche courrante est %s\n", current_branch);
         free(current_branch);
         return 0;
     }
 
-    if(strcmp(argv[1], "branch")==0){//ok
+    if(strcmp(argv[1], "branch")==0){
         if(branchExists(argv[2])){
             printf("La branche %s existe déjà...\n", argv[2]);
         }
@@ -133,17 +132,17 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
-    if(strcmp(argv[1], "branch-print")==0){//ok sauf master
+    if(strcmp(argv[1], "branch-print")==0){
         if(!branchExists(argv[2])){
             printf("La branche %s n'existe pas...\n", argv[2]);
         }
         else {
-            printBranch2(argv[2]);
+            printBranch(argv[2]);
         }
         return 0;
     }
 
-    if(strcmp(argv[1], "checkout-branch")==0){//nok
+    if(strcmp(argv[1], "checkout-branch")==0){
         if(!branchExists(argv[2])){
             printf("La branche %s n'existe pas...\n", argv[2]);
         }
@@ -154,7 +153,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
-    if(strcmp(argv[1], "checkout-commit")==0){//nok
+    if(strcmp(argv[1], "checkout-commit")==0){
         myGitCheckoutCommit(argv[2]);
         printf("Déplacement de commit vers %s\n", argv[2]);
         return 0;      

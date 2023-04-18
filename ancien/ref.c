@@ -44,25 +44,32 @@ void initRefs(){ //deja tester
     closedir(dir);
 }
 
-void createUpdateRef( char *ref_name, char *hash)
-{
-  char path[256] = ".refs/";
-
-  if(ref_name == NULL){
-    printf( "Chaine de charactère null...");
-    return;
-  }
-
-  strcat(path, ref_name);
-  FILE *f = fopen(path, "w");
-
-  if(f == NULL){
-    printf("Problème lors de l'ouverture du fichier %s", path);
-  }
-
-  fputs(hash, f);
-
-  fclose(f);
+void createUpdateRef(char* ref_name, char* hash){ //deja testé
+    if(ref_name == NULL || hash == NULL){
+        return;
+    }
+    if(file_exists(ref_name)){
+        char command1[256];
+        sprintf(command1,"touch .refs/%s",ref_name);
+        int ret = system(command1);
+        if(ret == -1){
+            printf("Erreur lors de la création du fichier .refs/%s\n", ref_name);
+            return;
+        }
+        char command2[256];
+        sprintf(command2,"echo %s > .refs/%s",hash,ref_name);
+        ret = system(command2);
+        if(ret == -1){
+            printf("Erreur lors de l'écriture dans le fichier .refs/%s\n", ref_name);
+            return;
+        }
+    }
+    char command3[256];
+    sprintf(command3,"echo %s > .refs/%s",hash,ref_name);
+    int ret = system(command3);
+    if(ret == -1){
+        printf("Erreur lors de l'écriture dans le fichier .refs/%s\n", ref_name);
+    }
 }
 void deleteRef(char* ref_name){ //déjà testé 
     if(ref_name == NULL){
@@ -82,31 +89,28 @@ void deleteRef(char* ref_name){ //déjà testé
         return;
     }
 }
-char* getRef(char* ref_name){
-	//printf("ENTER getRef\n");
+char* getRef(char *ref_name)
+{
+  char buff[256] = ".refs/";
+  strcat(buff, ref_name);
 
-	// Permet de rentrer dans le repertoire .refs
-	char buff_path_to_ref[255];
-	sprintf(buff_path_to_ref,".refs/%s",ref_name);
-	FILE* f = fopen(buff_path_to_ref,"r");
-	//printf("PATH =%s\n",buff_path_to_ref);
-	if(f == NULL){
-		//printf("PAS DE BOL\n");
-		return NULL;
-	}
-	char *buff_hash = (char*)malloc(sizeof(char)*255);
-	if(fgets(buff_hash,200,f) == NULL){
-		char* buff_vide = malloc(sizeof(char)*2);
-		sprintf(buff_vide," ");
-		fclose(f);
-		//printf("àà:%s:\n",buff_vide);
-		return buff_vide;
-	}
-	//printf("%s",buff_hash);
-	fclose(f);
-	//printf("àà:%s\n",buff_hash);
-	return buff_hash;
+  FILE *f = fopen(buff, "r");
+
+  if(f == NULL){
+    printf("Problème lors de la lecture du fichier %s", buff);
+    return NULL;
+  }
+
+  char *s = malloc(sizeof(char) * 256);
+  memset(s, 0, 256);
+
+  fgets(s, 256, f);
+  fclose(f);
+  return s;
 }
+
+
+
 
 void createFile(char* file) { //déjà testé
     if(file == NULL) {
@@ -142,55 +146,54 @@ void myGitAdd(char* file_or_folder) {
 
 void myGitCommit(char *branch_name, char *message)
 {
-  if(!file_exists(".refs")){
-    printf("Il faut d'abord initialiser les références du projets");
-    return;
-  }
-
-  char path[256] = ".refs/";
-  strcat(path, branch_name);
-  if(!file_exists(path)){
-    printf("La branche %s n'existe pas", path);
-    return;
-  }
-
-  char *last_hash = getRef(branch_name);
-  char *head_hash = getRef("HEAD");
-
-  bool is_different = strcmp(last_hash, head_hash);
-
-  free(head_hash);
-
-  if(is_different){
-    printf("HEAD doit pointer sur le dernier commit de la branche %s", branch_name);
-    return;
-  }
-
-  WorkTree *wt = ftwt(".add");
-
-  if(wt == NULL){
-    printf("Il faut crée le fichier .add");
-    return;
-  }
-
-  char *hash = saveWorkTree(wt, ".");
-  Commit *c = createCommit(hash);
-  free(hash);
-
-  if (strlen(last_hash) > 0){
-    commitSet(c, "predecessor", last_hash);
-  }
-  if(message != NULL){
-    commitSet(c, "message", message); // commit["message"] = message;
-  }
-  free(last_hash);
-
-  char *commit_hash = blobCommit(c);
-  createUpdateRef(branch_name, commit_hash);
-  createUpdateRef("HEAD", commit_hash);
-
-  free(commit_hash);
-  freeCommit(c);
-  
+if(!file_exists(".refs")){
+printf("Il faut d'abord initialiser les références du projets");
+return;
 }
 
+char path[256] = ".refs/";
+strcat(path, branch_name);
+if(!file_exists(path)){
+printf("La branche %s n'existe pas", path);
+return;
+}
+
+char *last_hash = getRef(branch_name);
+char *head_hash = getRef("HEAD");
+
+bool is_different = strcmp(last_hash, head_hash);
+
+free(head_hash);
+
+if(is_different){
+printf("HEAD doit pointer sur le dernier commit de la branche %s", branch_name);
+return;
+}
+
+WorkTree *wt = ftwt(".add");
+
+if(wt == NULL){
+printf("Il faut crée le fichier .add");
+return;
+}
+
+char *hash = saveWorkTree(wt, ".");
+Commit *c = createCommit(hash);
+free(hash);
+
+if (strlen(last_hash) > 0){
+commitSet(c, "predecessor", last_hash);
+}
+if(message != NULL){
+commitSet(c, "message", message); // commit["message"] = message;
+}
+free(last_hash);
+
+char *commit_hash = blobCommit(c);
+createUpdateRef(branch_name, commit_hash);
+createUpdateRef("HEAD", commit_hash);
+
+free(commit_hash);
+freeCommit(c);
+
+}
