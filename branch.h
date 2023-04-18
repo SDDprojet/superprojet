@@ -1,6 +1,8 @@
 #ifndef BRANCH_H
 #define BRANCH_H
 
+#include "liste.h"
+
 void initBranch();
 
 int branchExists(char* branch);

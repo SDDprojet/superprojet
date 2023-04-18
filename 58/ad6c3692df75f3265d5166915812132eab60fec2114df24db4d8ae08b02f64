@@ -122,8 +122,6 @@ int main(){
     printf("-------------------Exercice 8-----------------\n");
     printf("\n");
     printf("\n");
-    
-    
     initBranch();
     //désallouer
     freeList(l);

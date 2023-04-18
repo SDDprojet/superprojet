@@ -122,9 +122,7 @@ int main(){
     printf("-------------------Exercice 8-----------------\n");
     printf("\n");
     printf("\n");
-    
-    
-    initBranch();
+    //initBranch();
     //désallouer
     freeList(l);
     freeList(l3);

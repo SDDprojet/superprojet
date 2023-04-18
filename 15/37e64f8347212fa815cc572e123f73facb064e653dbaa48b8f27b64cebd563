@@ -2,7 +2,6 @@
 #include "commit.h"
 #include "filehash.h"
 #include "liste.h"
-#include "branch.h"
 #include "ref.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -122,9 +121,7 @@ int main(){
     printf("-------------------Exercice 8-----------------\n");
     printf("\n");
     printf("\n");
-    
-    
-    initBranch();
+    //initBranch();
     //désallouer
     freeList(l);
     freeList(l3);

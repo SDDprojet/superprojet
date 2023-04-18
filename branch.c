@@ -30,7 +30,7 @@ void initBranch(){
 
 int branchExists(char* branch){
     List* refs=listdir(".refs");
-    return searchLists(refs,branch) !=NULL;
+    return searchList(refs,branch) !=NULL;
 }
 
 void createBranch(char* branch){
@@ -139,7 +139,7 @@ List* branchList(char* branch){
     Commit* c=ftc(hashTopathCommit(commit_hash));
     while(c!=NULL){
         insertFirst(L,buildCell(commit_hash));
-        if(commmitGet(c,"predecessor")!=NULL){
+        if(commitGet(c,"predecessor")!=NULL){
             commit_hash=commitGet(c,"predecessor");
             c=ftc(hashTopathCommit(commit_hash));
         }else{
@@ -207,7 +207,7 @@ List* getAllCommits(){
         Cell* cell = *list;
         while(cell != NULL ) {
             if (searchList(L, cell->data) == NULL) {
-                insertFirst(&L, buildCell(cell->data));
+                insertFirst(L, buildCell(cell->data));
             }  
             cell = cell->next;
         }
