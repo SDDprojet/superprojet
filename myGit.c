@@ -24,9 +24,9 @@ int main(int argc, char* argv[]){
 
     if(argc == 1){
         printf("Utilisation : \n");
-        printf("%s \033[31minit\033[0m : Initialise le repertoire de references.\n", argv[0]);
-        printf("%s \033[31mlist-refs \033[0m: Affiche toutes les references existantes.\n", argv[0]);
-        printf("%s \033[31mcreate-ref <name> <hash> \033[0m: Cree la reference <name> qui pointe vers le commit correspondant au hash donne.\n", argv[0]);
+        printf("%s \033[31minit\033[0m : Initialiser le repertoire \n", argv[0]);
+        printf("%s \033[31mlist-refs \033[0m: Afficher toutes les references existantes.\n", argv[0]);
+        printf("%s \033[31mcreate-ref <name> <hash> \033[0m: Creer la reference <name> qui pointe vers le commit correspondant au hash donne.\n", argv[0]);
         printf("%s \033[31mdelete-ref <name> \033[0m: Supprime la reference name.\n", argv[0]);
         printf("%s \033[31madd <elem> [<elem2> <elem3> ...] \033[0m: Ajoute un ou plusieurs fichiers/repertoires a la zone de preparation (pour faire partie du prochain commit).\n", argv[0]);
         printf("%s \033[31mstatus \033[0m: Affiche le contenu de la zone de preparation.\n", argv[0]);
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]){
         printf("%s \033[31mbranch-print <branch-name>\033[0m: Affiche le hash de tous les commits de la branche\n", argv[0]);
         printf("%s \033[31mcheckout-branch <branch-name>\033[0m: Réalise un déplacement de branche\n", argv[0]);
         printf("%s \033[31mcheckout-commit <pattern>\033[0m: Réalise un déplacement de commit qui commence par <pattern>\n", argv[0]);
-        //printf("%s \033[31mmerge\033[0m <branch> [message]: Fusionne la branche courrante et <branch>\n", argv[0]);
+        printf("%s \033[31mmerge\033[0m <branch> [message]: Fusionne la branche courrante et <branch>\n", argv[0]);
         return 0 ; 
     }
 
@@ -138,7 +138,7 @@ int main(int argc, char* argv[]){
             printf("La branche %s n'existe pas...\n", argv[2]);
         }
         else {
-            printBranch2(argv[2]);
+            printBranch(argv[2]);
         }
         return 0;
     }
