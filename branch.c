@@ -29,8 +29,8 @@ void initBranch(){
 }
 
 int branchExists(char* branch){
-    List* refs=listdir(".refs");
-    return searchList(refs,branch) !=NULL;
+    List* chemin=listdir(".refs");
+    return searchList(chemin,branch) !=NULL;
 }
 
 void createBranch(char* branch){

@@ -340,13 +340,13 @@ void restoreWorkTree(WorkTree *wt, char *path)
       strcat(chemin, wt->tab[i].name);
 
       char *hash = wt->tab[i].hash;
-      if (isWorkTree(hash) == 0)
-      { //un fichier
+      if (isWorkTree(hash) == 0) //si c'est un fichier
+      { 
         cp(chemin, filePath(hash));
         setMode(getChmod(filePath(hash)), chemin);
       }
-      else if (isWorkTree(hash) == 1)
-      { //un repertoire
+      else if (isWorkTree(hash) == 1) //si c'est un repertoire
+      { 
         WorkTree *nwt = ftwt(workTreeToPath(hash));
         restoreWorkTree(nwt, chemin);
         setMode(getChmod(workTreeToPath(hash)), chemin);
