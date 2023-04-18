@@ -315,7 +315,7 @@ int isFile(const char* name){
         return 1;//si c'est un fichier
     }
 
-    return -1;//si le fichier ou le directory n'existe pas
+    return -1;//si c'est ni fichier ni répertoire 
 }
 
 int isWorkTree(char * hash){
@@ -330,34 +330,31 @@ int isWorkTree(char * hash){
 
 void restoreWorkTree(WorkTree *wt, char *path)
 {
-  for (int i = 0; i<wt -> n; i++)
-  {
-    size_t size = strlen(path) + strlen(wt->tab[i].name) + 2;
-    char *full_path = malloc(sizeof(char) * size);
-    memset(full_path, 0, size);
+    for (int i = 0; i<wt -> n; i++){
+      size_t size = strlen(path) + strlen(wt->tab[i].name) + 2;
+      char *chemin = malloc(sizeof(char) * size);
+      memset(chemin, 0, size);
 
-    strcat(full_path, path);
-    strcat(full_path, "/");
-    strcat(full_path, wt->tab[i].name);
+      strcat(chemin, path);
+      strcat(chemin, "/");
+      strcat(chemin, wt->tab[i].name);
 
-    char *hash = wt->tab[i].hash;
-    if (isWorkTree(hash) == 0)
-    { // si c’est un fichier
-    char *copyPath = filePath(hash);
-      cp(full_path, copyPath);
-      setMode(getChmod(copyPath), full_path);
+      char *hash = wt->tab[i].hash;
+      if (isWorkTree(hash) == 0)
+      { //un fichier
+        cp(chemin, filePath(hash));
+        setMode(getChmod(filePath(hash)), chemin);
+      }
+      else if (isWorkTree(hash) == 1)
+      { //un repertoire
+        WorkTree *nwt = ftwt(workTreeToPath(hash));
+        restoreWorkTree(nwt, chemin);
+        setMode(getChmod(workTreeToPath(hash)), chemin);
+        freeWorkTree(nwt);
+      }
+      free(chemin);
     }
-    else if (isWorkTree(hash) == 1)
-    { // si c’est un repertoire
-      char *copyPath = workTreeToPath(hash);
-      WorkTree *nwt = ftwt(copyPath);
-      restoreWorkTree(nwt, full_path);
-      setMode(getChmod(copyPath), full_path);
-      freeWorkTree(nwt);
-    }
-    free(full_path);
-  }
-}
+}   
 
 
 

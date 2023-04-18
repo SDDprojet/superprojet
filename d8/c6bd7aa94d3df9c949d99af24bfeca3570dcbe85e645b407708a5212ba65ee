@@ -93,7 +93,7 @@ int main(){
     printf("blobWorkTree(watermelon) = %s \n ",blobWorkTree(watermelon));
     printf("type de main.c  = %d\n",isFile("main.c"));
     printf("hash de safeWorktree %s \n",saveWorkTree(watermelon,"."));
-    //restoreWorkTree(watermelon,"."); //abandon (core dumped)
+    restoreWorkTree(watermelon,".");
     printf("\n");
     printf("\n");
     printf("-------------------Exercice 6-----------------\n");
