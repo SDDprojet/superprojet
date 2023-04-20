@@ -45,8 +45,9 @@ void initRefs(){ //deja tester
     closedir(dir);
 }
 
-void createUpdateRef( char *ref_name, char *hash){//deja testé
+void createUpdateRef( char *ref_name, const char *hash){//deja testé
 //cree ou met a jour une ref
+  
   char path[256] = ".refs/";
 
   if(ref_name == NULL){
@@ -60,7 +61,7 @@ void createUpdateRef( char *ref_name, char *hash){//deja testé
   if(f == NULL){
     printf("Problème lors de l'ouverture du fichier : createUpdateref%s", path);
   }
-
+  
   fputs(hash, f);
 
   fclose(f);
@@ -88,23 +89,22 @@ char* getRef(char* ref_name){
 //retourne la ref 
 
 	// Permet de rentrer dans le repertoire .refs
-	char buff[255];
-	sprintf(buff,".refs/%s",ref_name);
-	FILE* f = fopen(buff,"r");
+  char buff[256] = ".refs/";
+  strcat(buff, ref_name);
 
-	if(f == NULL){
-    printf("Erreur lors de l'ouverture du fichier .refs/ : getref %s\n",ref_name);
-		return NULL;
-	}
-	char *buff_hash = (char*)malloc(sizeof(char)*255);
-	if(fgets(buff_hash,200,f) == NULL){
-		char* buff_vide = malloc(sizeof(char)*2);
-		sprintf(buff_vide," ");
-		fclose(f);
-		return buff_vide;
-	}
-	fclose(f);
-	return buff_hash;
+  FILE *f = fopen(buff, "r");
+
+  if(f == NULL){
+    printf( "Problème lors de la lecture du fichier %s", buff);
+    return NULL;
+  }
+
+  char *s = malloc(sizeof(char) * 256);
+  memset(s, 0, 256);
+
+  fgets(s, 256, f);
+  fclose(f);
+  return s;
 }
 
 void createFile(char* file) { //déjà testé
@@ -118,6 +118,7 @@ void createFile(char* file) { //déjà testé
     if(system(buff) == -1) {
         printf("Erreur lors de la création du fichier %s\n", file);
     }
+    
 }
  
 void myGitAdd(char* file_or_folder) {

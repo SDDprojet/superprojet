@@ -90,6 +90,8 @@ int main(){
     printf("\n");
     printf("--------------------Exercice 5--------------------\n");
     printf("\n");
+    setMode(777,"main.c");
+    printf("getChmod =  %d \n",getChmod("main.c"));
     printf("blobWorkTree(watermelon) = %s \n ",blobWorkTree(watermelon));
     printf("type de main.c  = %d\n",isFile("main.c"));
     printf("hash de safeWorktree %s \n",saveWorkTree(watermelon,"."));

@@ -38,7 +38,6 @@ Cell* buildCell(char* ch){
 }
 void freeCell(Cell *c){
     if(c == NULL){
-        printf("cellule est null");
         return;
     }
 

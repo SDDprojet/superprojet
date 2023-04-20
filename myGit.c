@@ -49,7 +49,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
-    if(strcmp(argv[1],"refs-list")==0){//ok
+    if(strcmp(argv[1],"list-refs")==0){//ok
         printf("REFS : \n");
         if(file_exists(".refs")){
             List* L = listdir(".refs");
@@ -84,6 +84,8 @@ int main(int argc, char* argv[]){
         for(int i=2; i<argc; i++){
             myGitAdd(argv[i]);
         }
+        List* commitL =getAllCommits();
+        printf("list all commit = %s \n",ltos(commitL));
         return 0;
     }
 
@@ -282,6 +284,8 @@ int main(int argc, char* argv[]){
         }
     return 0;
     }
+
+    
     
     return 0;
 }

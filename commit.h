@@ -39,7 +39,7 @@ char* cts(Commit* c);
 
 void ctf(Commit* c, char* file);
 
-Commit *ftc(const char *file);
+Commit *ftc(char *file);
 
 Commit* stc(char *ch);
 

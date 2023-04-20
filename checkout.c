@@ -47,9 +47,16 @@ void restoreCommit(char*hash_commit){
 	
 }
 void myGitCheckoutBranch(char* branch){
+	printf("ukdhjfjdk");
 	if(branch == NULL){
 		return;
 	}
+	char* branchref=getRef(branch);
+	printf("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
+	createUpdateRef("HEAD",branchref);
+	printf("--------------------------------------------\n");
+	char* ref = getRef("HEAD");
+	restoreCommit(ref);
 	FILE* f = fopen(".current_branch","w");
 	if(f == NULL){
 		return;
@@ -57,10 +64,8 @@ void myGitCheckoutBranch(char* branch){
 	fprintf(f,"%s",branch);
 	fclose(f);
 	printf("Déplacement dans %s\n",branch);
-
-	createUpdateRef("HEAD",getRef(branch));
-	char* ref = getRef("HEAD");
-	restoreCommit(ref);
+	
+	
 
 
 }

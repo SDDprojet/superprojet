@@ -7,6 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -207,7 +208,7 @@ char *cts(Commit *c) { //déjà tester
 Commit *stc(char *s){ //déjà tester 
 //transforme de string a commit
     Commit *c = initCommit();   
-    char *token = strtok(s, "\n");
+    char *token = strtok(s, "\n"); //strtok : séparer les mots avec deuxième param
 
     while(token){
         kvp* pair = stkv(token);
@@ -235,36 +236,31 @@ void ctf(Commit *c, char *file){
   fclose(f);
 }
 
-Commit *ftc(const char *file){ //déjà tester
-//transforme un fichier en commit
-  FILE *f = fopen(file, "r");
-
-  if(f == NULL){
-    printf("Problème d'ouverture fichier : ftc \n");
-    return NULL;
-  }
-
-  size_t size = sizeof(char) * 256;
-  char *s = malloc(size);
-  if(s==NULL){
-        printf("Erreur d'allocation de mémoire : ftc\n");
-        fclose(f);
-        return NULL;
-  }
-  memset(s, 0, size);
-
-  char buf[256];
-  while(fgets(buf, 256, f)){
-    if(strlen(buf) + strlen(s) >= size){
-      size *= 2; s = realloc(s, size);
-    }
-    strcat(s, buf);
-  }
-
-  Commit *c = stc(s);
-  fclose(f);
-  free(s);
-  return c;
+Commit* ftc(char* file){
+	if(file == NULL){
+		return NULL;
+	}
+	FILE* f = fopen(file,"r");
+	if(f == NULL){
+		if(errno == ENOENT){
+			//printf("ftc: Le fichier %s n'existe pas !! \n",file);
+			return NULL;
+		}else{
+			//printf("ftc: autre erreur fopen\n");
+			return NULL;
+		}
+	}
+	Commit *c = initCommit();
+	char key[255];
+	char value[255];
+	char buff[255];
+	while(fgets(buff,255,f) != NULL){
+		if (sscanf(buff,"%s :%s",key,value) == 2){
+		commitSet(c,key,value);
+		}
+	}
+	fclose(f);
+	return c;
 }
 
 char *blobCommit(Commit *c){

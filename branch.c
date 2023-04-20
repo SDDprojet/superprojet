@@ -43,7 +43,7 @@ void createBranch(char* branch){
 
 char* getCurrentBranch(){
     //renvoi la branch courante
-    FILE* f = fopen(".re","r");
+    FILE* f = fopen(".current_branch","r");
     if (f == NULL){
         printf("Erreur d'ouverture du fichier .current_branch.\n");
         return NULL;

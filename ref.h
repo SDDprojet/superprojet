@@ -3,7 +3,7 @@
 
 void initRefs();
 
-void createUpdateRef(char* ref_name, char* hash);
+void createUpdateRef(char* ref_name,const char* hash);
 
 
 void deleteRef(char* ref_name);
